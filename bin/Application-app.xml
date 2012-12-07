@@ -24,7 +24,7 @@
     <visible>true</visible>
     <fullScreen>true</fullScreen>
     <aspectRatio>landscape</aspectRatio>
-    <renderMode>direct</renderMode>
+    <renderMode>gpu</renderMode>
     <autoOrients>false</autoOrients>
   </initialWindow>
 
