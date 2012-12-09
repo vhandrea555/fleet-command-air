@@ -5,6 +5,8 @@ package com.ad.games.fc2.view.starling.screen
 	import com.ad.games.fc2.view.starling.base.BaseScreen;
 	import com.ad.games.fc2.view.starling.map.MapView;
 	
+	import starling.text.TextField;
+	
 	public class MapScreen extends BaseScreen
 	{
 		private var _map:MapView;
@@ -18,7 +20,7 @@ package com.ad.games.fc2.view.starling.screen
 			super.draw();
 			_map = ConfigLoader.loadMap(MapConfig.MAP_DEFAULT);
 			addChild(_map);
-			_map.update();			
+			_map.update();	
 		}
 	}
 }

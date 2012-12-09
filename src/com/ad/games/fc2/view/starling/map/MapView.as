@@ -1,20 +1,25 @@
 package com.ad.games.fc2.view.starling.map
 {
+	import com.ad.games.fc2.Application;
 	import com.ad.games.fc2.GlobalConfig;
 	import com.ad.games.fc2.view.starling.base.BaseView;
 	import com.ad.games.fc2.view.starling.map.object.MapLayerObject;
-	import com.ad.games.fc2.view.utils.Console;
+	import com.ad.games.fc2.view.utils.DeviceProperties;
 	
 	import flash.display.BitmapData;
+	import flash.events.Event;
 	import flash.events.GesturePhase;
 	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
 	import flash.events.TransformGestureEvent;
+	import flash.utils.setInterval;
 	
+	import starling.display.BlendMode;
 	import starling.display.Image;
-	import starling.display.Quad;
+	import starling.display.QuadBatch;
 	import starling.display.Sprite;
 	import starling.events.Event;
+	import starling.events.TouchEvent;
 	import starling.textures.Texture;
 	
 	public class MapView extends BaseView
@@ -33,10 +38,6 @@ package com.ad.games.fc2.view.starling.map
 		
 		private static var _cells:Vector.<MapCell>;
 		private static var _activeCell:MapCell;
-		
-		//TODO: we need to use real mouse X/Y
-		private var mouseX:Number = 0;
-		private var mouseY:Number = 0;
 		
 		private static var _mouseX:Number = 0;
 		private static var _mouseY:Number = 0;
@@ -86,78 +87,58 @@ package com.ad.games.fc2.view.starling.map
 			var _height:Number = _rows*MapCell.SIZE;
 			
 			var bgCell:flash.display.Sprite = new flash.display.Sprite();
-			bgCell.graphics.lineStyle(10, 0x3399FF);
+			bgCell.graphics.lineStyle(1, 0x3399FF);
 			bgCell.graphics.beginFill(0x0066FF, 1);
-			
-			/*
 			bgCell.graphics.moveTo(0, 0);
 			bgCell.graphics.lineTo(MapCell.SIZE, 0);
 			bgCell.graphics.lineTo(MapCell.SIZE, MapCell.SIZE);
 			bgCell.graphics.lineTo(0, MapCell.SIZE);
 			bgCell.graphics.lineTo(0, 0);
-			*/
-			
-			bgCell.graphics.moveTo(-MapCell.SIZE/2, -MapCell.SIZE/2);
-			bgCell.graphics.lineTo(MapCell.SIZE/2, -MapCell.SIZE/2);
-			bgCell.graphics.lineTo(MapCell.SIZE/2, MapCell.SIZE/2);
-			bgCell.graphics.lineTo(-MapCell.SIZE/2, MapCell.SIZE/2);
-			bgCell.graphics.lineTo(-MapCell.SIZE/2, -MapCell.SIZE/2);			
 			
 			var bitmap:BitmapData = new BitmapData(MapCell.SIZE, MapCell.SIZE);
-			bitmap.draw(bgCell, bgCell.transform.matrix, bgCell.transform.colorTransform);
-			
+			bitmap.draw(bgCell);
 			var texture:Texture = Texture.fromBitmapData(bitmap);
+			var quadBatch:QuadBatch = new QuadBatch();
 			var image:Image = new Image(texture);
 			
-			addChild(image);
-
-			image.x = 100;
-			image.y = 100;
+			image.blendMode = BlendMode.NONE;
 			
-				/*
-			var _bg:Sprite = new flash.display.Sprite();
-			_bg.graphics.lineStyle(0.5, 0x3399FF);
-			
-			for (var i:uint = 0; i<_rows; i++) {
-				_bg.graphics.moveTo(0, i*MapCell.SIZE);
-				_bg.graphics.lineTo(_width, i*MapCell.SIZE);
-			}
-			for (var j:uint = 0; j<_cols; j++) {
-				_bg.graphics.moveTo(j*MapCell.SIZE, 0);
-				_bg.graphics.lineTo(j*MapCell.SIZE, _height);
-			}
+			for (var i:int=0; i<_cols; i++) {
 				
+				for (var j:int=0; j<_rows; j++) {
+					image.x = i*MapCell.SIZE;
+					image.y = j*MapCell.SIZE;
+					quadBatch.addImage(image);	
+				}
+			}			
 			
-			_bg.opaqueBackground = 0x0066FF;
+			quadBatch.blendMode = BlendMode.NONE;
+			//quadBatch.touchable = false;
 			
-			var _bgBMP:DisplayObject = Rasterizer.toBitmap(_bg, 0);
-			_bg = null;
-				
-			addChild(_bgBMP);
-				*/
+			addChild(quadBatch);
 			
 			//addChild(_selectionContainer);
 			//addChild(_layersContainer);
 			//addChild(_cursor);
 			
-			width = _width; 
-			height = _height;
-			
 			//_cursor.setState(MapCursor.STATE_SELECT);
 			//_cursor.update();
 
-			//setInterval(checkMouseMove, Application.UPDATE_TIMEOUT_NORMAL);
+			setInterval(checkMouseMove, GlobalConfig.UPDATE_TIMEOUT_NORMAL);
 			
-			/*
-			if (Application.isTouchInterface()) {
-				stage.addEventListener(TransformGestureEvent.GESTURE_ZOOM, _onZoom);
+			if (DeviceProperties.isTouchInterface()) {
+				Application.getInstance().stage.addEventListener(TransformGestureEvent.GESTURE_ZOOM, _onZoom);
 			} else {
-				stage.addEventListener(MouseEvent.MOUSE_WHEEL, _onMouseWheel);
+				Application.getInstance().stage.addEventListener(MouseEvent.MOUSE_WHEEL, _onMouseWheel);
 			}
-			*/
 			
-			//stage.addEventListener(MouseEvent.MOUSE_DOWN, _onMouseDown);
-			//stage.addEventListener(MouseEvent.MOUSE_UP, _onMouseUp);
+			Application.getInstance().stage.addEventListener(MouseEvent.MOUSE_DOWN, _onMouseDown);
+			Application.getInstance().stage.addEventListener(MouseEvent.MOUSE_UP, _onMouseUp);
+			
+			//addEventListener(TouchEvent.TOUCH, onTouch);
+		}
+		
+		private function onTouch(e:TouchEvent) {
 		}
 		
 		public function addLayer():uint
@@ -241,7 +222,7 @@ package com.ad.games.fc2.view.starling.map
 			if (cell != _activeCell) {
 				_activeCell = cell;
 				_cursor.placeTo(cell);
-				dispatchEvent(new Event(EVENT_ACTIVE_CELL));
+				dispatchEvent(new starling.events.Event(EVENT_ACTIVE_CELL));
 			}
 		}
 		
@@ -252,7 +233,7 @@ package com.ad.games.fc2.view.starling.map
 		
 		private function _getActiveCell():MapCell
 		{
-			return getCellAt(mouseX, mouseY);
+			return getCellAt(Application.getInstance().mouseX, Application.getInstance().mouseY);
 		}
 		
 		public function getCellAt(_x:Number, _y:Number):MapCell {
@@ -283,7 +264,7 @@ package com.ad.games.fc2.view.starling.map
 				onBeforeTransformation();
 				prepareForTransformation();
 				
-				scale(scaleX * (1 + e.delta / GlobalConfig.MOUSE_WHEEL_SPEED), mouseX, mouseY);
+				scale(scaleX * (1 + e.delta / GlobalConfig.MOUSE_WHEEL_SPEED), Application.getInstance().mouseX, Application.getInstance().mouseY);
 				
 				onAfterTransformation();				
 			}
@@ -303,19 +284,20 @@ package com.ad.games.fc2.view.starling.map
 						onAfterTransformation();
 						break;
 					case GesturePhase.UPDATE:
-						dispatchEvent(new Event(EVENT_MAP_UPDATE));
+						dispatchEvent(new starling.events.Event(EVENT_MAP_UPDATE));
 						break;
 				}
 				
 				if (_mode == MODE_SCALE) {
 					var _scale:Number = (e.scaleX + e.scaleY)/2;
-					scale(scaleX * _scale, mouseX, mouseY);
+					scale(scaleX * _scale, Application.getInstance().mouseX, Application.getInstance().mouseY);
 				}
 			}
 		}
 		
-		private function _onMouseDown(e:Event):void
+		private function _onMouseDown(e:flash.events.Event):void
 		{
+			trace("!!!");
 			if (isReadyForTransformation()) {
 				onBeforeTransformation();
 			}
@@ -325,7 +307,7 @@ package com.ad.games.fc2.view.starling.map
 			//e.preventDefault();
 		}
 		
-		private function _onMouseUp(e:Event):void
+		private function _onMouseUp(e:flash.events.Event):void
 		{
 			onAfterTransformation();
 			e.stopPropagation();
@@ -358,7 +340,7 @@ package com.ad.games.fc2.view.starling.map
 				_mode = MODE_DEFAULT;
 				if (_activeCell != null) {
 					updateActiveCell();
-					dispatchEvent(new Event(EVENT_MOUSE_UP));
+					dispatchEvent(new starling.events.Event(EVENT_MOUSE_UP));
 				}
 			} else if (_mode != MODE_DEFAULT) {
 				_stopDrag();
@@ -368,15 +350,15 @@ package com.ad.games.fc2.view.starling.map
 					objects[i].setMode(MapLayerObject.MODE_NORMAL);
 				}
 				_mode = MODE_DEFAULT;
-				dispatchEvent(new Event(EVENT_MAP_UPDATE));
+				dispatchEvent(new starling.events.Event(EVENT_MAP_UPDATE));
 			}			
 		}
 		
 		private function checkMouseMove(e:TimerEvent = null):void
 		{
-			if (mouseX != _mouseX || mouseY != _mouseY) {
-				_mouseX = mouseX;
-				_mouseY = mouseY;
+			if (Application.getInstance().mouseX != _mouseX || Application.getInstance().mouseY != _mouseY) {
+				_mouseX = Application.getInstance().mouseX;
+				_mouseY = Application.getInstance().mouseY;
 				
 				_onMouseMove();
 			}
@@ -393,14 +375,13 @@ package com.ad.games.fc2.view.starling.map
 		
 		private function scale(_scale:Number, centerX:Number, centerY:Number):void
 		{
-			/*
 			_scale = (_scale < SCALE_MIN) ? SCALE_MIN : _scale;
 			_scale = (_scale > SCALE_MAX) ? SCALE_MAX : _scale;
 			
 			_mode = MODE_SCALE;		
 			
-			var minScaleX:Number = Application.getSreenWidth() / (width / scaleX);
-			var minScaleY:Number = Application.getSreenHeight() / (height / scaleX);
+			var minScaleX:Number = DeviceProperties.getSreenWidth() / (width / scaleX);
+			var minScaleY:Number = DeviceProperties.getSreenHeight() / (height / scaleX);
 			
 			_scale = (_scale < minScaleX) ? minScaleX : _scale;
 			_scale = (_scale < minScaleY) ? minScaleY : _scale;
@@ -409,9 +390,9 @@ package com.ad.games.fc2.view.starling.map
 			var newX:Number = x - (centerX)*dScale;
 			var newY:Number = y - (centerY)*dScale;
 			
-			var minX:Number = Application.getSreenWidth() - width;
+			var minX:Number = DeviceProperties.getSreenWidth() - width;
 			var maxX:Number = 0;
-			var minY:Number = Application.getSreenHeight() - height;
+			var minY:Number = DeviceProperties.getSreenHeight() - height;
 			var maxY:Number = 0;
 			
 			newX = (newX < minX) ? minX : newX;
@@ -424,20 +405,19 @@ package com.ad.games.fc2.view.starling.map
 			
 			scaleX = _scale;
 			scaleY = _scale;
-			*/
 		}		
 		
 		private function _startDrag():void
 		{
 			prepareForTransformation();
 			_mode = MODE_DRAG;
-			//startDrag(false, new Rectangle(Application.getSreenWidth() - width, Application.getSreenHeight() - height, width - stage.stageWidth, height - stage.stageHeight));
+			startDrag();
 		}
 		
 		private function _stopDrag():void
 		{
 			if (_mode == MODE_DRAG) {				
-				//stopDrag();				
+				stopDrag();				
 			}
 		}
 		
@@ -445,10 +425,10 @@ package com.ad.games.fc2.view.starling.map
 		{
 			return (
 				(
-					getSelectedObjects().length == 0 //&& Application.isTouchInterface()
-				)/*
+					getSelectedObjects().length == 0 && DeviceProperties.isTouchInterface()
+				)
 				||
-				!Application.isTouchInterface()*/
+				!DeviceProperties.isTouchInterface()
 			)
 			&&
 				(
