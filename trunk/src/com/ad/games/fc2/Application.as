@@ -11,6 +11,7 @@ package com.ad.games.fc2
 	
 	import starling.core.Starling;
 	
+	[SWF(width="960", height="640", stageFocusRect="false", wmode="direct")]
 	public class Application extends Sprite
 	{
 		private static var _instance:Application;

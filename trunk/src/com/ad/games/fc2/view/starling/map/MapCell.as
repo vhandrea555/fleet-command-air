@@ -8,7 +8,7 @@ package com.ad.games.fc2.view.starling.map
 
 	public final class MapCell extends Point
 	{
-		public static const SIZE:uint = 100;
+		public static const SIZE:uint = 50;
 		
 		private var _row:uint = 0;
 		private var _col:uint = 0;
