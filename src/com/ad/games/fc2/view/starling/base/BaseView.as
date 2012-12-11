@@ -26,25 +26,5 @@ package com.ad.games.fc2.view.starling.base
 				draw();
 			}
 		}
-		
-		
-		private var mouseStartX:int = 0;
-		private var mouseStartY:int = 0;
-		
-		public function startDrag():void {
-			mouseStartX = Application.getInstance().mouseX;
-			mouseStartY = Application.getInstance().mouseY;
-			
-			stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-		}
-		
-		private function onMouseMove(e:MouseEvent):void {
-			x = mouseStartX - e.localX;
-			y = mouseStartY - e.localY;
-		}
-		
-		public function stopDrag():void {
-			stage.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-		}
 	}
 }
