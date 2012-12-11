@@ -39,8 +39,9 @@ package com.ad.games.fc2
 			} catch(e:Error) {
 				
 			}
+			
 			stage.frameRate = 1000 / GlobalConfig.UPDATE_TIMEOUT_NORMAL;
-			stage.quality = GlobalConfig.QUALITY_NORMAL;
+			//stage.quality = GlobalConfig.QUALITY_NORMAL;
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.align = StageAlign.TOP_LEFT;
 			
@@ -51,23 +52,15 @@ package com.ad.games.fc2
 		{
 			_context.setNation(GlobalConfig.NATIONS[GlobalConfig.DEFAULT_NATION_ID]);
 			
+			Console.attach(this);
+			Console.appendLine("START");
+			
+			Starling.multitouchEnabled = true;
 			_canvas = new Starling(ScreenContainer, stage);
 			_canvas.showStats = true;
 			_canvas.start();
 			
-			/*
-			_mapView = new MapView(this);
-			addChild(_mapView);
-			
-			_controlsView = new ControlsView(this);
-			_controlsView.x = getSreenWidth();
-			addChild(_controlsView);
-			
-			_controlsView.update();			
-			_mapView.update();
-			*/
-			
-			Console.attach(this);
+			Console.appendLine("END");
 		}
 	}
 }

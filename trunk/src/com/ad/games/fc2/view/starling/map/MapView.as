@@ -1,28 +1,23 @@
 package com.ad.games.fc2.view.starling.map
 {
 	import com.ad.games.fc2.Application;
-	import com.ad.games.fc2.GlobalConfig;
-	import com.ad.games.fc2.view.starling.base.BaseView;
+	import com.ad.games.fc2.view.starling.base.BaseTouchView;
 	import com.ad.games.fc2.view.starling.map.object.MapLayerObject;
-	import com.ad.games.fc2.view.utils.DeviceProperties;
 	
 	import flash.display.BitmapData;
 	import flash.events.Event;
-	import flash.events.GesturePhase;
 	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
 	import flash.events.TransformGestureEvent;
-	import flash.utils.setInterval;
+	import flash.geom.Rectangle;
 	
-	import starling.display.BlendMode;
 	import starling.display.Image;
 	import starling.display.QuadBatch;
 	import starling.display.Sprite;
 	import starling.events.Event;
-	import starling.events.TouchEvent;
 	import starling.textures.Texture;
 	
-	public class MapView extends BaseView
+	public class MapView extends BaseTouchView
 	{
 		public static const EVENT_ACTIVE_CELL:String = "onActiveCell";
 		public static const EVENT_MOUSE_UP:String = "onMapMouseUp";
@@ -39,6 +34,7 @@ package com.ad.games.fc2.view.starling.map
 		private static var _cells:Vector.<MapCell>;
 		private static var _activeCell:MapCell;
 		
+		/*
 		private static var _mouseX:Number = 0;
 		private static var _mouseY:Number = 0;
 		
@@ -52,6 +48,7 @@ package com.ad.games.fc2.view.starling.map
 		
 		private static const SCALE_MIN:Number = 0.25;
 		private static const SCALE_MAX:Number = 4;
+		*/
 		
 		private static var _instance:MapView;
 		
@@ -83,6 +80,8 @@ package com.ad.games.fc2.view.starling.map
 		{
 			super.draw();
 			
+			setBoundingBox(new Rectangle(0, 0, stage.stageWidth, stage.stageHeight));
+			
 			var _width:Number = _cols*MapCell.SIZE;
 			var _height:Number = _rows*MapCell.SIZE;
 			
@@ -101,7 +100,7 @@ package com.ad.games.fc2.view.starling.map
 			var quadBatch:QuadBatch = new QuadBatch();
 			var image:Image = new Image(texture);
 			
-			image.blendMode = BlendMode.NONE;
+			//image.blendMode = BlendMode.NONE;
 			
 			for (var i:int=0; i<_cols; i++) {
 				
@@ -112,7 +111,7 @@ package com.ad.games.fc2.view.starling.map
 				}
 			}			
 			
-			quadBatch.blendMode = BlendMode.NONE;
+			//quadBatch.blendMode = BlendMode.NONE;
 			//quadBatch.touchable = false;
 			
 			addChild(quadBatch);
@@ -124,8 +123,9 @@ package com.ad.games.fc2.view.starling.map
 			//_cursor.setState(MapCursor.STATE_SELECT);
 			//_cursor.update();
 
-			setInterval(checkMouseMove, GlobalConfig.UPDATE_TIMEOUT_NORMAL);
+			//setInterval(checkMouseMove, GlobalConfig.UPDATE_TIMEOUT_NORMAL);
 			
+			/*
 			if (DeviceProperties.isTouchInterface()) {
 				Application.getInstance().stage.addEventListener(TransformGestureEvent.GESTURE_ZOOM, _onZoom);
 			} else {
@@ -134,11 +134,10 @@ package com.ad.games.fc2.view.starling.map
 			
 			Application.getInstance().stage.addEventListener(MouseEvent.MOUSE_DOWN, _onMouseDown);
 			Application.getInstance().stage.addEventListener(MouseEvent.MOUSE_UP, _onMouseUp);
+			*/
 			
+			//trace(Multitouch.supportedGestures);
 			//addEventListener(TouchEvent.TOUCH, onTouch);
-		}
-		
-		private function onTouch(e:TouchEvent) {
 		}
 		
 		public function addLayer():uint
@@ -258,6 +257,7 @@ package com.ad.games.fc2.view.starling.map
 		
 		private function _onMouseWheel(e:MouseEvent):void
 		{
+			/*
 			if (isReadyForTransformation()) {
 				_stopDrag();
 				
@@ -268,10 +268,12 @@ package com.ad.games.fc2.view.starling.map
 				
 				onAfterTransformation();				
 			}
+			*/
 		}
 		
 		private function _onZoom(e:TransformGestureEvent):void
 		{
+			/*
 			if (isReadyForTransformation()) {
 				switch(e.phase) {
 					case GesturePhase.BEGIN:
@@ -293,10 +295,12 @@ package com.ad.games.fc2.view.starling.map
 					scale(scaleX * _scale, Application.getInstance().mouseX, Application.getInstance().mouseY);
 				}
 			}
+			*/
 		}
 		
 		private function _onMouseDown(e:flash.events.Event):void
 		{
+			/*
 			trace("!!!");
 			if (isReadyForTransformation()) {
 				onBeforeTransformation();
@@ -305,26 +309,32 @@ package com.ad.games.fc2.view.starling.map
 			e.stopPropagation();
 			e.stopImmediatePropagation();
 			//e.preventDefault();
+			*/
 		}
 		
 		private function _onMouseUp(e:flash.events.Event):void
 		{
+			/*
 			onAfterTransformation();
 			e.stopPropagation();
 			e.stopImmediatePropagation();
 			//e.preventDefault();
+			*/
 		}
 		
 		private function onBeforeTransformation():void
 		{
+			/*
 			if (_mode == MODE_DEFAULT) {
 				updateActiveCell();
 				_mode = MODE_TRANSFORMATION_PREPARE;
 			}
+			*/
 		}
 		
 		private function prepareForTransformation():void
 		{
+			/*
 			if (_mode == MODE_TRANSFORMATION_PREPARE) {
 				//Console.appendLine("prepareForTransformation");
 				var objects:Vector.<MapLayerObject> = MapLayerObject.getMapLayerObjects();
@@ -332,10 +342,12 @@ package com.ad.games.fc2.view.starling.map
 					objects[i].setMode(MapLayerObject.MODE_TRANSFORMATION);
 				}
 			}
+			*/
 		}		
 		
 		private function onAfterTransformation():void
 		{
+			/*
 			if (_mode == MODE_DEFAULT || _mode == MODE_TRANSFORMATION_PREPARE) {
 				_mode = MODE_DEFAULT;
 				if (_activeCell != null) {
@@ -351,30 +363,36 @@ package com.ad.games.fc2.view.starling.map
 				}
 				_mode = MODE_DEFAULT;
 				dispatchEvent(new starling.events.Event(EVENT_MAP_UPDATE));
-			}			
+			}
+			*/
 		}
 		
 		private function checkMouseMove(e:TimerEvent = null):void
 		{
+			/*
 			if (Application.getInstance().mouseX != _mouseX || Application.getInstance().mouseY != _mouseY) {
 				_mouseX = Application.getInstance().mouseX;
 				_mouseY = Application.getInstance().mouseY;
 				
 				_onMouseMove();
 			}
+			*/
 		}
 		
 		private function _onMouseMove():void
 		{
+			/*
 			if (_mode == MODE_TRANSFORMATION_PREPARE) {
 				_startDrag();
 			} else if (_mode == MODE_DEFAULT) {
 				updateActiveCell();
 			}
+			*/
 		}		
 		
 		private function scale(_scale:Number, centerX:Number, centerY:Number):void
 		{
+			/*
 			_scale = (_scale < SCALE_MIN) ? SCALE_MIN : _scale;
 			_scale = (_scale > SCALE_MAX) ? SCALE_MAX : _scale;
 			
@@ -405,24 +423,30 @@ package com.ad.games.fc2.view.starling.map
 			
 			scaleX = _scale;
 			scaleY = _scale;
+			*/
 		}		
 		
 		private function _startDrag():void
 		{
+			/*
 			prepareForTransformation();
 			_mode = MODE_DRAG;
 			startDrag();
+			*/
 		}
 		
 		private function _stopDrag():void
 		{
+			/*
 			if (_mode == MODE_DRAG) {				
 				stopDrag();				
 			}
+			*/
 		}
 		
 		private function isReadyForTransformation():Boolean
 		{
+			/*
 			return (
 				(
 					getSelectedObjects().length == 0 && DeviceProperties.isTouchInterface()
@@ -436,6 +460,8 @@ package com.ad.games.fc2.view.starling.map
 					||
 					(_activeCell && (getObjectsAtCell(_activeCell).length == 0))
 				);
+			*/
+			return true;
 		}
 		
 		public function getSelectionContainer():Sprite
@@ -443,10 +469,12 @@ package com.ad.games.fc2.view.starling.map
 			return _selectionContainer;
 		}
 		
+		/*
 		public function getMode():uint
 		{
 			return _mode;
 		}
+		*/
 		
 		public static function getInstance():MapView
 		{
