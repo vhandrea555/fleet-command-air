@@ -20,7 +20,7 @@
   <initialWindow>
     <content>Application.swf</content>
     <systemChrome>standard</systemChrome>
-    <!--transparent>false</transparent-->
+    <!-- transparent>true</transparent-->
     <visible>true</visible>
     <fullScreen>true</fullScreen>
     <aspectRatio>landscape</aspectRatio>
