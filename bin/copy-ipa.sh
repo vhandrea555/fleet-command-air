@@ -1,0 +1,1 @@
+cp -rf fc.ipa /Volumes/ADenisiPhone/private/var/mobile/Documents/Installous/Downloads/

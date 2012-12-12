@@ -6,7 +6,7 @@ package com.ad.games.fc2
 
 	public class GlobalConfig
 	{
-		public static const UPDATE_TIMEOUT_NORMAL:uint = 40;
+		public static const UPDATE_TIMEOUT_NORMAL:uint = 20;
 		public static const UPDATE_TIMEOUT_LOW:uint = 40;
 		public static const QUALITY_NORMAL:String = StageQuality.HIGH;
 		
