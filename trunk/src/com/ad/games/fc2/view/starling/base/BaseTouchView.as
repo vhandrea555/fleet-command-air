@@ -9,20 +9,16 @@ package com.ad.games.fc2.view.starling.base
 
 	public class BaseTouchView extends BaseView
 	{
-		private var maxScale:Number = 1;
-		private var enableDrag:Boolean = false;
+		private var maxScale:Number = 2;
+		private var minScale:Number = 0.5;
+		
+		private var enableDrag:Boolean = true;
+		private var enableRotation:Boolean = false;
 		private var boundingBox:Rectangle;
 		
 		public function BaseTouchView()
 		{
-		}
-		
-		public function setMaxScale(_maxScale:Number):void {
-			maxScale = _maxScale;
-		}
-		
-		public function setBoundingBox(rectangle:Rectangle):void {
-			boundingBox = rectangle;
+			super();
 		}
 		
 		protected override function draw():void {
@@ -38,24 +34,29 @@ package com.ad.games.fc2.view.starling.base
 				// one finger touching -> move
 				var delta:Point = touches[0].getMovement(parent);
 				
-				var _x:Number = x + delta.x;
-				var _y:Number = y + delta.y;
+				var _x:Number = x/scaleX + delta.x - pivotX;
+				var _y:Number = y/scaleY + delta.y - pivotY;
+
+				//x += delta.x;
+				//y += delta.y;
 				
 				if (_x >= boundingBox.x) {
-					x = boundingBox.x;
-				} else if (_x <= (boundingBox.width - width)) {
-					x = boundingBox.width - width;
+					x = (boundingBox.x + pivotX)*scaleX;
+				} else if (_x <= (boundingBox.width - width/scaleX)) {
+					x = (boundingBox.width - width/scaleX + pivotX)*scaleX;
 				} else {
-					x = _x;
+					x = (_x + pivotX)*scaleX;
 				}
 				
-				if (_y > boundingBox.y) {
-					y = boundingBox.y;
-				} else if (_y < (boundingBox.height - height)) {
-					y = boundingBox.height - height;
+				if (_y >= boundingBox.y) {
+					y = (boundingBox.y + pivotY)*scaleY;
+				} else if (_y <= (boundingBox.height - height/scaleY)) {
+					y = (boundingBox.height - height/scaleY + pivotY)*scaleY;
 				} else {
-					y = _y;
+					y = (_y + pivotY)*scaleY;
 				}
+				
+				trace(scaleX, x, pivotX, width, _x, y, pivotY, height, _y);
 			}            
 			else if (touches.length == 2)
 			{
@@ -71,29 +72,37 @@ package com.ad.games.fc2.view.starling.base
 				var currentVector:Point  = currentPosA.subtract(currentPosB);
 				var previousVector:Point = previousPosA.subtract(previousPosB);
 				
-				var currentAngle:Number  = Math.atan2(currentVector.y, currentVector.x);
-				var previousAngle:Number = Math.atan2(previousVector.y, previousVector.x);
-				var deltaAngle:Number = currentAngle - previousAngle;
-				
 				// update pivot point based on previous center
 				var previousLocalA:Point  = touchA.getPreviousLocation(this);
 				var previousLocalB:Point  = touchB.getPreviousLocation(this);
 				pivotX = (previousLocalA.x + previousLocalB.x) * 0.5;
 				pivotY = (previousLocalA.y + previousLocalB.y) * 0.5;
-				
+								
 				// update location based on the current center
 				x = (currentPosA.x + currentPosB.x) * 0.5;
 				y = (currentPosA.y + currentPosB.y) * 0.5;
 				
+				trace(pivotX, x, pivotY, y);
+				
 				//trace(pivotX, pivotY, x, y);
 				
 				// rotate
-				//rotation += deltaAngle;
+				if (enableRotation) {
+					var currentAngle:Number  = Math.atan2(currentVector.y, currentVector.x);
+					var previousAngle:Number = Math.atan2(previousVector.y, previousVector.x);
+					var deltaAngle:Number = currentAngle - previousAngle;
+					rotation += deltaAngle;
+				}
 				
 				// scale
-				var sizeDiff:Number = currentVector.length / previousVector.length;
-				scaleX *= sizeDiff;
-				scaleY *= sizeDiff;
+				var scale:Number = scaleX * (currentVector.length / previousVector.length);
+				
+				trace(scale);
+				
+				scale = (scale > maxScale) ? maxScale : scale;
+				scale = (scale < minScale) ? minScale : scale;
+				scaleX = scale;
+				scaleY = scale;
 			}
 			
 			var touch:Touch = event.getTouch(this, TouchPhase.ENDED);
@@ -110,6 +119,26 @@ package com.ad.games.fc2.view.starling.base
 		{
 			removeEventListener(TouchEvent.TOUCH, onTouch);
 			super.dispose();
+		}
+		
+		public function setEnableDrag(_enableDrag:Boolean):void {
+			enableDrag = _enableDrag;
+		}
+		
+		public function setEnableRotation(_enableRotation:Boolean):void {
+			enableRotation = _enableRotation;
+		}
+		
+		public function setMaxScale(_maxScale:Number):void {
+			maxScale = _maxScale;
+		}
+		
+		public function setMinScale(_minScale:Number):void {
+			minScale = _minScale;
+		}
+		
+		public function setBoundingBox(rectangle:Rectangle):void {
+			boundingBox = rectangle;
 		}
 	}
 }

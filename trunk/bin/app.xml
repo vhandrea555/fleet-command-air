@@ -49,7 +49,7 @@
 		<key>UIApplicationExitsOnSuspend</key><string>YES</string>		
 	]]>
     </InfoAdditions>
-	<!-- requestedDisplayResolution>high</requestedDisplayResolution -->
+	<requestedDisplayResolution>high</requestedDisplayResolution>
   </iPhone>
 
 </application>

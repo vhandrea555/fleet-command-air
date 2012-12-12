@@ -4,17 +4,21 @@ package com.ad.games.fc2.view.utils
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
+	import flash.utils.getDefinitionByName;
+	import flash.utils.getQualifiedClassName;
 	
 	public final class Console extends Sprite
 	{
 		
 		private static var _instance:Console;
 		private static var _output:TextField;
+		private static var enableDisplay:Boolean;
 		
-		public function Console()
+		public function Console(_enableDisplay:Boolean = true)
 		{
 			super();
-			var style:TextFormat = new TextFormat("Arial", 30, 0);
+			enableDisplay = _enableDisplay;
+			var style:TextFormat = new TextFormat("Arial", 12, 0);
 			_output = new TextField();
 			_output.setTextFormat(style);
 			_output.defaultTextFormat = style;
@@ -32,22 +36,21 @@ package com.ad.games.fc2.view.utils
 			return _instance;
 		}
 		
-		public static function attach(_parent:Sprite):void
+		public static function attach(_parent:Sprite):Console
 		{
 			_parent.addChild(getInstance());
+			return getInstance();
 		}
 		
-		public static function append(_text:String):void
+		public static function append(_text:String, object:Object = null):void
 		{
 			getInstance();
-			_output.appendText(_text);
-			trace(_text);
-		}
-		
-		public static function appendLine(_text:String):void
-		{
-			getInstance();
-			_output.appendText("\n" + _text);
+			
+			_text = ((object != null) ? getDefinitionByName(getQualifiedClassName(object)) : "") + " " + _text;
+			
+			if (enableDisplay) {
+				_output.appendText("\n" + _text);
+			}
 			trace(_text);
 		}
 		

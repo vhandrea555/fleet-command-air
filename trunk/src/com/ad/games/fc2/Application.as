@@ -8,6 +8,7 @@ package com.ad.games.fc2
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
+	import flash.display3D.Context3DRenderMode;
 	import flash.events.Event;
 	import flash.geom.Rectangle;
 	
@@ -55,45 +56,23 @@ package com.ad.games.fc2
 		private function draw():void
 		{
 			_context.setNation(GlobalConfig.NATIONS[GlobalConfig.DEFAULT_NATION_ID]);
+			Console.attach(this).y = 25;
 			
-			Console.attach(this);
-			Console.appendLine("START");
+			Console.append("draw start", this);
 			
 			Starling.multitouchEnabled = true;
 			
-			Console.appendLine(stage.stageWidth + " x " + stage.stageHeight);
+			Console.append(stage.stageWidth + " x " + stage.stageHeight);
 			
-			_canvas = new Starling(ScreenContainer, stage);
+			var viewPort:Rectangle = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
+			
+			_canvas = new Starling(ScreenContainer, stage, viewPort, null, Context3DRenderMode.AUTO, "baseline");
 			_canvas.showStats = true;
-			
-			_canvas.antiAliasing = 1;
-			_canvas.simulateMultitouch  = false;
-			
-			Console.appendLine("trying to start");
+			//_canvas.antiAliasing = 1;
+			_canvas.simulateMultitouch  = true;
 			_canvas.start();
-			Console.appendLine("started");
 			
-			/*
-			_canvas.stage3D.addEventListener(Event.CONTEXT3D_CREATE, function(e:Event):void
-			{
-				// Starling is ready! We remove the startup image and start the game.
-				Console.appendLine("trying to start");
-				_canvas.context.configureBackBuffer(320, 240, 1, true, true);
-				_canvas.start();
-				Console.appendLine("started");
-			});	
-			*/
-			
-			/*
-			if (NativeApplication) {
-				NativeApplication.nativeApplication.addEventListener(Event.ACTIVATE,
-					function (e:Event):void { _canvas.start(); });
-				
-				NativeApplication.nativeApplication.addEventListener(Event.DEACTIVATE,
-					function (e:Event):void { _canvas.stop(); });		
-			}
-			*/
-			Console.appendLine("END");
+			Console.append("draw end", this);
 		}
 	}
 }

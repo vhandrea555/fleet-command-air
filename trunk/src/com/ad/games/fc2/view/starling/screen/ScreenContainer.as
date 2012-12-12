@@ -12,20 +12,20 @@ package com.ad.games.fc2.view.starling.screen
 		public function ScreenContainer()
 		{
 			super();
-			Console.appendLine("ScreenContainer");
+			Console.append("init", this);
 			addEventListener(Event.ADDED_TO_STAGE, update);
 		}
 		
 		protected override function draw():void {
 			super.draw();
 			
-			Console.appendLine("ScreenContainer1");
+			Console.append("draw start", this);
 			
 			_currentScreen = new MapScreen();			
 			addChild(_currentScreen);
 			_currentScreen.update();
 			
-			Console.appendLine("ScreenContainer2");
+			Console.append("draw end", this);
 		}
 	}
 }
