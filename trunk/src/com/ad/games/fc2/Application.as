@@ -48,12 +48,8 @@ package com.ad.games.fc2
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.align = StageAlign.TOP_LEFT;
 			//stage.autoOrients = false;
-			stage.color = 0x00FFFFFF;
-			stage.stageWidth = 100;
-			stage.stageHeight = 100;
-			//setStyle("backgroundAlpha", 0);
 			
-			this.draw();
+			draw();
 		}
 		
 		private function draw():void
@@ -65,17 +61,28 @@ package com.ad.games.fc2
 			
 			Starling.multitouchEnabled = true;
 			
+			Console.appendLine(stage.stageWidth + " x " + stage.stageHeight);
+			
 			_canvas = new Starling(ScreenContainer, stage);
 			_canvas.showStats = true;
 			
 			_canvas.antiAliasing = 1;
 			_canvas.simulateMultitouch  = false;
+			
+			Console.appendLine("trying to start");
+			_canvas.start();
+			Console.appendLine("started");
+			
+			/*
 			_canvas.stage3D.addEventListener(Event.CONTEXT3D_CREATE, function(e:Event):void
 			{
 				// Starling is ready! We remove the startup image and start the game.
+				Console.appendLine("trying to start");
+				_canvas.context.configureBackBuffer(320, 240, 1, true, true);
 				_canvas.start();
 				Console.appendLine("started");
-			});			
+			});	
+			*/
 			
 			/*
 			if (NativeApplication) {

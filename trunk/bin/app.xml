@@ -23,10 +23,10 @@
     <!-- transparent>true</transparent-->
     <visible>true</visible>
     <fullScreen>true</fullScreen>
-    <aspectRatio>landscape</aspectRatio>
-    <renderMode>direct</renderMode>
+    <aspectRatio>landscape</aspectRatio>    
     <autoOrients>false</autoOrients>
-    <depthAndStencil>true</depthAndStencil>
+    <renderMode>direct</renderMode>
+    <!-- depthAndStencil>true</depthAndStencil -->
   </initialWindow>
 
 	<icon>
@@ -49,7 +49,7 @@
 		<key>UIApplicationExitsOnSuspend</key><string>YES</string>		
 	]]>
     </InfoAdditions>
-	<requestedDisplayResolution>high</requestedDisplayResolution>
+	<!-- requestedDisplayResolution>high</requestedDisplayResolution -->
   </iPhone>
 
 </application>
