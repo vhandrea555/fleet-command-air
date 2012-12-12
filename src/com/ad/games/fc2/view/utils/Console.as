@@ -41,12 +41,14 @@ package com.ad.games.fc2.view.utils
 		{
 			getInstance();
 			_output.appendText(_text);
+			trace(_text);
 		}
 		
 		public static function appendLine(_text:String):void
 		{
 			getInstance();
 			_output.appendText("\n" + _text);
+			trace(_text);
 		}
 		
 		public static function clear():void
