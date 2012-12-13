@@ -21,7 +21,7 @@ package com.ad.games.fc2.view.starling.screen
 			
 			Console.append("draw start", this);
 			
-			_currentScreen = new MapScreen();			
+			_currentScreen = new MapScreen();
 			addChild(_currentScreen);
 			_currentScreen.update();
 			

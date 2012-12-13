@@ -5,11 +5,9 @@ package com.ad.games.fc2.view.starling.map
 	import com.ad.games.fc2.view.starling.map.object.MapLayerObject;
 	
 	import flash.display.BitmapData;
-	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
 	import flash.events.TransformGestureEvent;
-	import flash.geom.Rectangle;
 	
 	import starling.display.Image;
 	import starling.display.QuadBatch;
@@ -79,8 +77,6 @@ package com.ad.games.fc2.view.starling.map
 		protected override function draw():void
 		{
 			super.draw();
-			
-			setBoundingBox(new Rectangle(0, 0, stage.stageWidth, stage.stageHeight));
 			
 			var _width:Number = _cols*MapCell.SIZE;
 			var _height:Number = _rows*MapCell.SIZE;
