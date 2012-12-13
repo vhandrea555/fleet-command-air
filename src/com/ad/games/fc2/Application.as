@@ -54,7 +54,7 @@ package com.ad.games.fc2
 			draw();
 		}
 		
-		private function handleResize() :void {
+		private function handleResize(e:Event=null) :void {
 
 			Console.append("stage " + stage.stageWidth + " x " + stage.stageHeight, this);
 			Console.append("stage screen " + stage.fullScreenWidth + " x " +  stage.fullScreenHeight, this);

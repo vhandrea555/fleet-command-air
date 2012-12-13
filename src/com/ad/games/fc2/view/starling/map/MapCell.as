@@ -8,8 +8,6 @@ package com.ad.games.fc2.view.starling.map
 
 	public final class MapCell extends Point
 	{
-		public static const SIZE:uint = 50;
-		
 		private var _row:uint = 0;
 		private var _col:uint = 0;
 		private var _shape:Sprite;
@@ -33,7 +31,7 @@ package com.ad.games.fc2.view.starling.map
 					_shape.x = x;
 					_shape.y = y;
 					//_shape.graphics.lineStyle(4, MapCursor.STATE_ORDER);
-					//_shape.graphics.drawCircle(MapCell.SIZE/2, MapCell.SIZE/2, MapCell.SIZE/2);
+					//_shape.graphics.drawCircle(GlobalConfig.MAP_CELL_SIZE/2, GlobalConfig.MAP_CELL_SIZE/2, GlobalConfig.MAP_CELL_SIZE/2);
 					//_map.getSelectionContainer().addChild(_shape);
 				} else {
 					//_shape.graphics.clear();

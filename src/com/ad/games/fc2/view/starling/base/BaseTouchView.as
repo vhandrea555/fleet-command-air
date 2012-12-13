@@ -124,19 +124,19 @@ package com.ad.games.fc2.view.starling.base
 		}
 		
 		protected function onSingleTouchStart(touch:Touch):Boolean {
-			return true;
+			return false;
 		}
 		
 		protected function onSingleTouchEnd(touch:Touch):Boolean {
-			return true;
+			return false;
 		}
 		
 		protected function onSingleTouchOver(touch:Touch):Boolean {
-			return true;
+			return false;
 		}
 		
 		protected function onSingleTouchMove(touch:Touch):Boolean {
-			return true;
+			return false;
 		}		
 		
 		private function onTouch(event:TouchEvent):void
@@ -171,6 +171,10 @@ package com.ad.games.fc2.view.starling.base
 			touches = event.getTouches(this, TouchPhase.HOVER);
 			
 			if (touches.length == 1) {
+				var p:Point = touches[0].getLocation(this);
+				_cursorX = p.x;
+				_cursorY = p.y;
+				
 				onSingleTouchOver(touches[0]);
 			}
 			

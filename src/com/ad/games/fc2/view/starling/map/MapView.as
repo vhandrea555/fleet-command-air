@@ -1,5 +1,6 @@
 package com.ad.games.fc2.view.starling.map
 {
+	import com.ad.games.fc2.GlobalConfig;
 	import com.ad.games.fc2.view.starling.base.BaseTouchView;
 	import com.ad.games.fc2.view.starling.map.object.MapLayerObject;
 	
@@ -48,8 +49,8 @@ package com.ad.games.fc2.view.starling.map
 			for (var r:uint=0; r<_rows; r++) {
 				for (var c:uint=0; c<_cols; c++) {
 					var cell:MapCell = new MapCell(c, r, this);
-					cell.x = c*MapCell.SIZE;
-					cell.y = r*MapCell.SIZE;
+					cell.x = c*GlobalConfig.MAP_CELL_SIZE;
+					cell.y = r*GlobalConfig.MAP_CELL_SIZE;
 					_cells.push(cell);
 				}
 			}
@@ -58,20 +59,20 @@ package com.ad.games.fc2.view.starling.map
 		}
 				
 		private function drawBackground(factor:uint = 10):DisplayObject {
-			var _width:Number = factor*MapCell.SIZE;
-			var _height:Number = factor*MapCell.SIZE;
+			var _width:Number = factor*GlobalConfig.MAP_CELL_SIZE;
+			var _height:Number = factor*GlobalConfig.MAP_CELL_SIZE;
 			
 			var bgCell:flash.display.Sprite = new flash.display.Sprite();
 			bgCell.opaqueBackground = 0x0066FF;
 			bgCell.graphics.lineStyle(1, 0x3399FF);
 			
 			for (var i:uint = 0; i<factor; i++) {
-				bgCell.graphics.moveTo(0, i*MapCell.SIZE);
-				bgCell.graphics.lineTo(_width, i*MapCell.SIZE);
+				bgCell.graphics.moveTo(0, i*GlobalConfig.MAP_CELL_SIZE);
+				bgCell.graphics.lineTo(_width, i*GlobalConfig.MAP_CELL_SIZE);
 			}
 			for (var j:uint = 0; j<factor; j++) {
-				bgCell.graphics.moveTo(j*MapCell.SIZE, 0);
-				bgCell.graphics.lineTo(j*MapCell.SIZE, _height);
+				bgCell.graphics.moveTo(j*GlobalConfig.MAP_CELL_SIZE, 0);
+				bgCell.graphics.lineTo(j*GlobalConfig.MAP_CELL_SIZE, _height);
 			}
 			
 			var bitmap:BitmapData = new BitmapData(_width, _height);
@@ -207,8 +208,8 @@ package com.ad.games.fc2.view.starling.map
 		}
 		
 		public function getCellAt(p:Point):MapCell {
-			var col:Number = Math.round((p.x - MapCell.SIZE/2)/MapCell.SIZE); 
-			var row:Number = Math.round((p.y - MapCell.SIZE/2)/MapCell.SIZE);
+			var col:Number = Math.round((p.x - GlobalConfig.MAP_CELL_SIZE/2)/GlobalConfig.MAP_CELL_SIZE); 
+			var row:Number = Math.round((p.y - GlobalConfig.MAP_CELL_SIZE/2)/GlobalConfig.MAP_CELL_SIZE);
 			
 			return getCell(col, row);
 		}
@@ -232,11 +233,11 @@ package com.ad.games.fc2.view.starling.map
 		 */
 
 		protected override function onSingleTouchStart(touch:Touch):Boolean {
-			return true;
+			return false;
 		}
 		
 		protected override function onSingleTouchEnd(touch:Touch):Boolean {
-			return true;
+			return false;
 		}
 		
 		protected override function onSingleTouchOver(touch:Touch):Boolean {
@@ -245,7 +246,7 @@ package com.ad.games.fc2.view.starling.map
 		}
 		
 		protected override function onSingleTouchMove(touch:Touch):Boolean {			
-			return true;
+			return false;
 		}		
 		
 		private function isReadyForTransformation():Boolean

@@ -36,9 +36,9 @@ package com.ad.games.fc2.view.starling.map.object
 			super(layer);
 			_movePath = new Path(getMaxSpeed(), getMaxAngleSpeed(), getAcceleration());			
 			_displayPath = new Path(getMaxSpeed(), getMaxAngleSpeed(), getAcceleration());
-			_movePath.setMaxLength(2*_maxSpeed*MapCell.SIZE);			
+			_movePath.setMaxLength(2*_maxSpeed*GlobalConfig.MAP_CELL_SIZE);			
 			_path = new MapPath(this);
-			_path.setMaxLength(2*_maxSpeed*MapCell.SIZE);			
+			_path.setMaxLength(2*_maxSpeed*GlobalConfig.MAP_CELL_SIZE);			
 			_timer = new Timer(Application.UPDATE_TIMEOUT_LOW, 0);
 			_mapLayerMovingObjects.push(this);
 		}
@@ -47,8 +47,8 @@ package com.ad.games.fc2.view.starling.map.object
 		{
 			super.draw();
 			addChild(_path);
-			_path.x = MapCell.SIZE/2;
-			_path.y = MapCell.SIZE/2;
+			_path.x = GlobalConfig.MAP_CELL_SIZE/2;
+			_path.y = GlobalConfig.MAP_CELL_SIZE/2;
 		}
 		
 		public override function select(select:Boolean = true):void
@@ -134,8 +134,8 @@ package com.ad.games.fc2.view.starling.map.object
 						
 						if (_displayPath.getPointsCount() != 0 && _displayPath.getLength() <= ((_path.getMaxLength() - _path.getLength()))) {
 							graphics.clear();
-							graphics.moveTo(_displayPath.getStart().x + MapCell.SIZE/2, _displayPath.getStart().y + MapCell.SIZE/2);
-							MapPath.drawPath(graphics, _displayPath, MapCell.SIZE/2, MapCell.SIZE/2);
+							graphics.moveTo(_displayPath.getStart().x + GlobalConfig.MAP_CELL_SIZE/2, _displayPath.getStart().y + GlobalConfig.MAP_CELL_SIZE/2);
+							MapPath.drawPath(graphics, _displayPath, GlobalConfig.MAP_CELL_SIZE/2, GlobalConfig.MAP_CELL_SIZE/2);
 							if (Map.getInstance().getCursor().getState() != MapCursor.STATE_ORDER) {
 								Map.getInstance().getCursor().setState(MapCursor.STATE_ORDER);
 							}
@@ -235,7 +235,7 @@ package com.ad.games.fc2.view.starling.map.object
 				*/
 				
 				//_cell = _path.getCells()[_path.getCells().length - 1];
-				_cell = Map.getInstance().getCellAt(x + MapCell.SIZE/2, y + MapCell.SIZE/2);
+				_cell = Map.getInstance().getCellAt(x + GlobalConfig.MAP_CELL_SIZE/2, y + GlobalConfig.MAP_CELL_SIZE/2);
 				
 				_path.clear();
 				_path.update();

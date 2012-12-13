@@ -42,7 +42,7 @@ package com.ad.games.fc.view.map
 				_objectShapes[i] = new Sprite();
 				var color:uint = (_objects[i] is ShipMapLayerObject) ? ShipMapLayerObject(_objects[i]).getShip().getNation().getColor() : 0xFFFFFF;
 				_objectShapes[i].graphics.beginFill(color);
-				_objectShapes[i].graphics.drawRect(0, 0, MapCell.SIZE*SCALE, MapCell.SIZE*SCALE);
+				_objectShapes[i].graphics.drawRect(0, 0, GlobalConfig.MAP_CELL_SIZE*SCALE, GlobalConfig.MAP_CELL_SIZE*SCALE);
 				_objectShapes[i].graphics.endFill();
 				addChild(_objectShapes[i]);
 			}
