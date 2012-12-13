@@ -87,7 +87,7 @@ package com.ad.games.fc2.view.starling.map.object
 				//_selection.graphics.clear();				
 				if (_color > -1) {
 					//_selection.graphics.lineStyle(4, _color);
-					//_selection.graphics.drawCircle(MapCell.SIZE/2, MapCell.SIZE/2, MapCell.SIZE/2);				
+					//_selection.graphics.drawCircle(GlobalConfig.MAP_CELL_SIZE/2, GlobalConfig.MAP_CELL_SIZE/2, GlobalConfig.MAP_CELL_SIZE/2);				
 				}
 			}
 		}
