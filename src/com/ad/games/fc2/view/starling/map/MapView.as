@@ -1,22 +1,21 @@
 package com.ad.games.fc2.view.starling.map
 {
-	import com.ad.games.fc2.Application;
 	import com.ad.games.fc2.view.starling.base.BaseTouchView;
 	import com.ad.games.fc2.view.starling.map.object.MapLayerObject;
 	
 	import flash.display.BitmapData;
-	import flash.events.MouseEvent;
-	import flash.events.TimerEvent;
-	import flash.events.TransformGestureEvent;
+	import flash.geom.Point;
 	
 	import starling.display.BlendMode;
+	import starling.display.DisplayObject;
 	import starling.display.Image;
 	import starling.display.QuadBatch;
 	import starling.display.Sprite;
 	import starling.events.Event;
+	import starling.events.Touch;
 	import starling.textures.Texture;
 	
-	public class MapView extends BaseTouchView
+	public final class MapView extends BaseTouchView
 	{
 		public static const EVENT_ACTIVE_CELL:String = "onActiveCell";
 		public static const EVENT_MOUSE_UP:String = "onMapMouseUp";
@@ -32,23 +31,6 @@ package com.ad.games.fc2.view.starling.map
 		
 		private static var _cells:Vector.<MapCell>;
 		private static var _activeCell:MapCell;
-		
-		/*
-		private static var _mouseX:Number = 0;
-		private static var _mouseY:Number = 0;
-		
-		public static const MODE_DEFAULT:uint = 0;
-		public static const MODE_DRAG:uint = 1;
-		public static const MODE_SCALE:uint = 2;
-		public static const MODE_TRANSFORMATION_PREPARE:uint = 3;
-		public static const MODE_TRANSFORMATION_READY:uint = 4;
-		
-		private static var _mode:uint = MODE_DEFAULT;
-		
-		private static const SCALE_MIN:Number = 0.25;
-		private static const SCALE_MAX:Number = 4;
-		*/
-		
 		private static var _instance:MapView;
 		
 		public function MapView(cols:uint, rows:uint)
@@ -60,7 +42,7 @@ package com.ad.games.fc2.view.starling.map
 			_cells = new <MapCell>[];
 			
 			_layersContainer =  new Sprite();
-			_cursor = new MapCursor(this);
+			_cursor = new MapCursor();
 			_selectionContainer = new Sprite();
 			
 			for (var r:uint=0; r<_rows; r++) {
@@ -74,53 +56,58 @@ package com.ad.games.fc2.view.starling.map
 			
 			_instance = this;
 		}
+				
+		private function drawBackground(factor:uint = 10):DisplayObject {
+			var _width:Number = factor*MapCell.SIZE;
+			var _height:Number = factor*MapCell.SIZE;
+			
+			var bgCell:flash.display.Sprite = new flash.display.Sprite();
+			bgCell.opaqueBackground = 0x0066FF;
+			bgCell.graphics.lineStyle(1, 0x3399FF);
+			
+			for (var i:uint = 0; i<factor; i++) {
+				bgCell.graphics.moveTo(0, i*MapCell.SIZE);
+				bgCell.graphics.lineTo(_width, i*MapCell.SIZE);
+			}
+			for (var j:uint = 0; j<factor; j++) {
+				bgCell.graphics.moveTo(j*MapCell.SIZE, 0);
+				bgCell.graphics.lineTo(j*MapCell.SIZE, _height);
+			}
+			
+			var bitmap:BitmapData = new BitmapData(_width, _height);
+			bitmap.draw(bgCell);			
+			var texture:Texture = Texture.fromBitmapData(bitmap);
+			var image:Image = new Image(texture);
+			image.blendMode = BlendMode.NONE;
+			
+			var quadBatch:QuadBatch = new QuadBatch();
+			quadBatch.blendMode = BlendMode.NONE;
+			
+			var cols:int = Math.ceil(_cols/factor);
+			var rows:int = Math.ceil(_rows/factor);
+			for (var _i:int=0; _i<cols; _i++) {
+				for (var _j:int=0; _j<rows; _j++) {
+					image.x = _i*_width;
+					image.y = _j*_height;
+					quadBatch.addImage(image);	
+				}
+			}
+			
+			return quadBatch;
+		}		
 		
 		protected override function draw():void
 		{
 			super.draw();
 			
-			var _width:Number = _cols*MapCell.SIZE;
-			var _height:Number = _rows*MapCell.SIZE;
-			
-			var bgCell:flash.display.Sprite = new flash.display.Sprite();
-			bgCell.graphics.lineStyle(1, 0x3399FF);
-			bgCell.graphics.beginFill(0x0066FF, 1);
-			bgCell.graphics.moveTo(0, 0);
-			bgCell.graphics.lineTo(MapCell.SIZE, 0);
-			bgCell.graphics.lineTo(MapCell.SIZE, MapCell.SIZE);
-			bgCell.graphics.lineTo(0, MapCell.SIZE);
-			bgCell.graphics.lineTo(0, 0);
-			
-			var bitmap:BitmapData = new BitmapData(MapCell.SIZE, MapCell.SIZE);
-			bitmap.draw(bgCell);
-			var texture:Texture = Texture.fromBitmapData(bitmap);
-			var quadBatch:QuadBatch = new QuadBatch();
-			var image:Image = new Image(texture);
-			
-			//image.blendMode = BlendMode.NONE;
-			
-			for (var i:int=0; i<_cols; i++) {
-				
-				for (var j:int=0; j<_rows; j++) {
-					image.x = i*MapCell.SIZE;
-					image.y = j*MapCell.SIZE;
-					quadBatch.addImage(image);	
-				}
-			}			
-			
-			quadBatch.blendMode = BlendMode.NONE;
-			/*quadBatch.touchable = false;*/
-			
-			addChild(quadBatch);
-			
-			//addChild(_selectionContainer);
-			//addChild(_layersContainer);
-			//addChild(_cursor);
-			
-			//_cursor.setState(MapCursor.STATE_SELECT);
-			//_cursor.update();
 
-			//setInterval(checkMouseMove, GlobalConfig.UPDATE_TIMEOUT_NORMAL);
+			addChild(drawBackground());
+			addChild(_selectionContainer);
+			addChild(_layersContainer);
+			addChild(_cursor);
+			
+			_cursor.update();
+			_cursor.setState(MapCursor.STATE_SELECT);			
 			
 			/*
 			if (DeviceProperties.isTouchInterface()) {
@@ -132,9 +119,6 @@ package com.ad.games.fc2.view.starling.map
 			Application.getInstance().stage.addEventListener(MouseEvent.MOUSE_DOWN, _onMouseDown);
 			Application.getInstance().stage.addEventListener(MouseEvent.MOUSE_UP, _onMouseUp);
 			*/
-			
-			//trace(Multitouch.supportedGestures);
-			//addEventListener(TouchEvent.TOUCH, onTouch);
 		}
 		
 		public function addLayer():uint
@@ -204,21 +188,16 @@ package com.ad.games.fc2.view.starling.map
 			return objects;
 		}
 		
-		private function updateActiveCell():void
+		private function activateCell(cell:MapCell = null):void
 		{
-			var cell:MapCell = _getActiveCell();
+			if (cell == null) {				
+				cell = getCellAt(getCursorPoint());
+			}
 			
-			if (cell != null) {
-				activateCell(cell);
-			}			
-		}
-		
-		private function activateCell(cell:MapCell):void
-		{
-			if (cell != _activeCell) {
+			if (cell != null && cell != _activeCell) {
 				_activeCell = cell;
 				_cursor.placeTo(cell);
-				dispatchEvent(new starling.events.Event(EVENT_ACTIVE_CELL));
+				dispatchEvent(new Event(EVENT_ACTIVE_CELL));
 			}
 		}
 		
@@ -227,14 +206,9 @@ package com.ad.games.fc2.view.starling.map
 			return _activeCell;
 		}
 		
-		private function _getActiveCell():MapCell
-		{
-			return getCellAt(Application.getInstance().mouseX, Application.getInstance().mouseY);
-		}
-		
-		public function getCellAt(_x:Number, _y:Number):MapCell {
-			var col:Number = Math.round((_x - MapCell.SIZE/2)/MapCell.SIZE); 
-			var row:Number = Math.round((_y - MapCell.SIZE/2)/MapCell.SIZE);
+		public function getCellAt(p:Point):MapCell {
+			var col:Number = Math.round((p.x - MapCell.SIZE/2)/MapCell.SIZE); 
+			var row:Number = Math.round((p.y - MapCell.SIZE/2)/MapCell.SIZE);
 			
 			return getCell(col, row);
 		}
@@ -252,194 +226,27 @@ package com.ad.games.fc2.view.starling.map
 		* Map zooming/scaling logics
 		*/
 		
-		private function _onMouseWheel(e:MouseEvent):void
-		{
-			/*
-			if (isReadyForTransformation()) {
-				_stopDrag();
-				
-				onBeforeTransformation();
-				prepareForTransformation();
-				
-				scale(scaleX * (1 + e.delta / GlobalConfig.MOUSE_WHEEL_SPEED), Application.getInstance().mouseX, Application.getInstance().mouseY);
-				
-				onAfterTransformation();				
-			}
-			*/
+		
+		/*
+		 * Touches processing
+		 */
+
+		protected override function onSingleTouchStart(touch:Touch):Boolean {
+			return true;
 		}
 		
-		private function _onZoom(e:TransformGestureEvent):void
-		{
-			/*
-			if (isReadyForTransformation()) {
-				switch(e.phase) {
-					case GesturePhase.BEGIN:
-						_stopDrag();
-						onBeforeTransformation();
-						prepareForTransformation();
-						_mode = MODE_SCALE;
-						break;
-					case GesturePhase.END:
-						onAfterTransformation();
-						break;
-					case GesturePhase.UPDATE:
-						dispatchEvent(new starling.events.Event(EVENT_MAP_UPDATE));
-						break;
-				}
-				
-				if (_mode == MODE_SCALE) {
-					var _scale:Number = (e.scaleX + e.scaleY)/2;
-					scale(scaleX * _scale, Application.getInstance().mouseX, Application.getInstance().mouseY);
-				}
-			}
-			*/
+		protected override function onSingleTouchEnd(touch:Touch):Boolean {
+			return true;
 		}
 		
-		private function _onMouseDown(e:flash.events.Event):void
-		{
-			/*
-			trace("!!!");
-			if (isReadyForTransformation()) {
-				onBeforeTransformation();
-			}
-			
-			e.stopPropagation();
-			e.stopImmediatePropagation();
-			//e.preventDefault();
-			*/
+		protected override function onSingleTouchOver(touch:Touch):Boolean {
+			activateCell();
+			return true;
 		}
 		
-		private function _onMouseUp(e:flash.events.Event):void
-		{
-			/*
-			onAfterTransformation();
-			e.stopPropagation();
-			e.stopImmediatePropagation();
-			//e.preventDefault();
-			*/
-		}
-		
-		private function onBeforeTransformation():void
-		{
-			/*
-			if (_mode == MODE_DEFAULT) {
-				updateActiveCell();
-				_mode = MODE_TRANSFORMATION_PREPARE;
-			}
-			*/
-		}
-		
-		private function prepareForTransformation():void
-		{
-			/*
-			if (_mode == MODE_TRANSFORMATION_PREPARE) {
-				//Console.appendLine("prepareForTransformation");
-				var objects:Vector.<MapLayerObject> = MapLayerObject.getMapLayerObjects();
-				for (var i:uint = 0; i<objects.length; i++) {
-					objects[i].setMode(MapLayerObject.MODE_TRANSFORMATION);
-				}
-			}
-			*/
+		protected override function onSingleTouchMove(touch:Touch):Boolean {			
+			return true;
 		}		
-		
-		private function onAfterTransformation():void
-		{
-			/*
-			if (_mode == MODE_DEFAULT || _mode == MODE_TRANSFORMATION_PREPARE) {
-				_mode = MODE_DEFAULT;
-				if (_activeCell != null) {
-					updateActiveCell();
-					dispatchEvent(new starling.events.Event(EVENT_MOUSE_UP));
-				}
-			} else if (_mode != MODE_DEFAULT) {
-				_stopDrag();
-				
-				var objects:Vector.<MapLayerObject> = MapLayerObject.getMapLayerObjects();
-				for (var i:uint = 0; i<objects.length; i++) {
-					objects[i].setMode(MapLayerObject.MODE_NORMAL);
-				}
-				_mode = MODE_DEFAULT;
-				dispatchEvent(new starling.events.Event(EVENT_MAP_UPDATE));
-			}
-			*/
-		}
-		
-		private function checkMouseMove(e:TimerEvent = null):void
-		{
-			/*
-			if (Application.getInstance().mouseX != _mouseX || Application.getInstance().mouseY != _mouseY) {
-				_mouseX = Application.getInstance().mouseX;
-				_mouseY = Application.getInstance().mouseY;
-				
-				_onMouseMove();
-			}
-			*/
-		}
-		
-		private function _onMouseMove():void
-		{
-			/*
-			if (_mode == MODE_TRANSFORMATION_PREPARE) {
-				_startDrag();
-			} else if (_mode == MODE_DEFAULT) {
-				updateActiveCell();
-			}
-			*/
-		}		
-		
-		private function scale(_scale:Number, centerX:Number, centerY:Number):void
-		{
-			/*
-			_scale = (_scale < SCALE_MIN) ? SCALE_MIN : _scale;
-			_scale = (_scale > SCALE_MAX) ? SCALE_MAX : _scale;
-			
-			_mode = MODE_SCALE;		
-			
-			var minScaleX:Number = DeviceProperties.getSreenWidth() / (width / scaleX);
-			var minScaleY:Number = DeviceProperties.getSreenHeight() / (height / scaleX);
-			
-			_scale = (_scale < minScaleX) ? minScaleX : _scale;
-			_scale = (_scale < minScaleY) ? minScaleY : _scale;
-			
-			var dScale:Number = _scale - scaleX;
-			var newX:Number = x - (centerX)*dScale;
-			var newY:Number = y - (centerY)*dScale;
-			
-			var minX:Number = DeviceProperties.getSreenWidth() - width;
-			var maxX:Number = 0;
-			var minY:Number = DeviceProperties.getSreenHeight() - height;
-			var maxY:Number = 0;
-			
-			newX = (newX < minX) ? minX : newX;
-			newX = (newX > maxX) ? maxX : newX;
-			newY = (newY < minY) ? minY : newY;
-			newY = (newY > maxY) ? maxY : newY;
-			
-			x = newX;
-			y = newY;
-			
-			scaleX = _scale;
-			scaleY = _scale;
-			*/
-		}		
-		
-		private function _startDrag():void
-		{
-			/*
-			prepareForTransformation();
-			_mode = MODE_DRAG;
-			startDrag();
-			*/
-		}
-		
-		private function _stopDrag():void
-		{
-			/*
-			if (_mode == MODE_DRAG) {				
-				stopDrag();				
-			}
-			*/
-		}
 		
 		private function isReadyForTransformation():Boolean
 		{
@@ -465,13 +272,6 @@ package com.ad.games.fc2.view.starling.map
 		{
 			return _selectionContainer;
 		}
-		
-		/*
-		public function getMode():uint
-		{
-			return _mode;
-		}
-		*/
 		
 		public static function getInstance():MapView
 		{

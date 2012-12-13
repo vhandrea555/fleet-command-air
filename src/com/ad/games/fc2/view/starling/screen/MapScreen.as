@@ -6,7 +6,7 @@ package com.ad.games.fc2.view.starling.screen
 	import com.ad.games.fc2.view.starling.map.MapView;
 	import com.ad.games.fc2.view.utils.DeviceProperties;
 	
-	public class MapScreen extends BaseScreen
+	public final class MapScreen extends BaseScreen
 	{
 		private var _map:MapView;
 		

@@ -1,6 +1,6 @@
 package com.ad.games.fc2.model
 {
-	public class ApplicationContext
+	public final class ApplicationContext
 	{
 		private var _nation:Nation;
 		
