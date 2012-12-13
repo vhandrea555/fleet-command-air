@@ -9,6 +9,7 @@ package com.ad.games.fc2.view.starling.map
 	import flash.events.TimerEvent;
 	import flash.events.TransformGestureEvent;
 	
+	import starling.display.BlendMode;
 	import starling.display.Image;
 	import starling.display.QuadBatch;
 	import starling.display.Sprite;
@@ -107,8 +108,8 @@ package com.ad.games.fc2.view.starling.map
 				}
 			}			
 			
-			//quadBatch.blendMode = BlendMode.NONE;
-			//quadBatch.touchable = false;
+			quadBatch.blendMode = BlendMode.NONE;
+			/*quadBatch.touchable = false;*/
 			
 			addChild(quadBatch);
 			
