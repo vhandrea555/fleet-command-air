@@ -1,5 +1,7 @@
 package com.ad.games.fc2.view.starling.base
 {
+	import com.ad.games.fc2.view.utils.Console;
+	
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
@@ -34,29 +36,26 @@ package com.ad.games.fc2.view.starling.base
 				// one finger touching -> move
 				var delta:Point = touches[0].getMovement(parent);
 				
-				var _x:Number = x/scaleX + delta.x - pivotX;
-				var _y:Number = y/scaleY + delta.y - pivotY;
-
-				//x += delta.x;
-				//y += delta.y;
+				var _x:Number = x + delta.x;
+				var _y:Number = y + delta.y;
 				
 				if (_x >= boundingBox.x) {
-					x = (boundingBox.x + pivotX)*scaleX;
-				} else if (_x <= (boundingBox.width - width/scaleX)) {
-					x = (boundingBox.width - width/scaleX + pivotX)*scaleX;
+					x = boundingBox.x;
+				} else if (_x <= (boundingBox.width - width)) {
+					x = boundingBox.width - width;
 				} else {
-					x = (_x + pivotX)*scaleX;
+					x = _x;
 				}
 				
 				if (_y >= boundingBox.y) {
-					y = (boundingBox.y + pivotY)*scaleY;
-				} else if (_y <= (boundingBox.height - height/scaleY)) {
-					y = (boundingBox.height - height/scaleY + pivotY)*scaleY;
+					y = boundingBox.y;
+				} else if (_y <= (boundingBox.height - height)) {
+					y = boundingBox.height - height;
 				} else {
-					y = (_y + pivotY)*scaleY;
+					y = _y;
 				}
 				
-				trace(scaleX, x, pivotX, width, _x, y, pivotY, height, _y);
+				//Console.append(scaleX + "," + x + "," + width/scaleX + "," + _x + "," + y + "," + height/scaleX + "," + _y + "," + boundingBox.toString());
 			}            
 			else if (touches.length == 2)
 			{
@@ -75,16 +74,12 @@ package com.ad.games.fc2.view.starling.base
 				// update pivot point based on previous center
 				var previousLocalA:Point  = touchA.getPreviousLocation(this);
 				var previousLocalB:Point  = touchB.getPreviousLocation(this);
+				
 				pivotX = (previousLocalA.x + previousLocalB.x) * 0.5;
-				pivotY = (previousLocalA.y + previousLocalB.y) * 0.5;
-								
+				pivotY = (previousLocalA.y + previousLocalB.y) * 0.5;												
 				// update location based on the current center
 				x = (currentPosA.x + currentPosB.x) * 0.5;
 				y = (currentPosA.y + currentPosB.y) * 0.5;
-				
-				trace(pivotX, x, pivotY, y);
-				
-				//trace(pivotX, pivotY, x, y);
 				
 				// rotate
 				if (enableRotation) {
@@ -97,18 +92,33 @@ package com.ad.games.fc2.view.starling.base
 				// scale
 				var scale:Number = scaleX * (currentVector.length / previousVector.length);
 				
-				trace(scale);
-				
 				scale = (scale > maxScale) ? maxScale : scale;
 				scale = (scale < minScale) ? minScale : scale;
 				scaleX = scale;
 				scaleY = scale;
+				
+				//Console.append(scaleX + "," + x + "," + pivotX + "," + width + "," + _x + "," + y + "," + pivotY + "," + height + "," + _y);				
 			}
 			
 			var touch:Touch = event.getTouch(this, TouchPhase.ENDED);
 			
-			if (touch && touch.tapCount == 2)
-				parent.addChild(this); // bring self to front
+			if (touch) {
+				//Console.append("ENDED");
+				//Console.append(x + "," + pivotX + "," + y + "," + pivotY);
+				
+				if (pivotX > 0) {
+					x = x - pivotX*scaleX;
+					pivotX = 0;
+				}
+				if (pivotY > 0) {
+					y = y - pivotY*scaleY;
+					pivotY = 0;
+				}			
+			}
+			
+			if (touch && touch.tapCount == 2) {
+				//parent.addChild(this); // bring self to front
+			}
 			
 			// enable this code to see when you're hovering over the object
 			// touch = event.getTouch(this, TouchPhase.HOVER);            

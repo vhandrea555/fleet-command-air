@@ -22,7 +22,11 @@ package com.ad.games.fc2.view.utils
 			_output = new TextField();
 			_output.setTextFormat(style);
 			_output.defaultTextFormat = style;
+			_output.width = 480;
+			_output.wordWrap = true;
+			
 			addChild(_output);
+			
 			_output.autoSize = TextFieldAutoSize.LEFT;
 			_output.selectable = false;
 		}
@@ -49,8 +53,9 @@ package com.ad.games.fc2.view.utils
 			_text = ((object != null) ? getDefinitionByName(getQualifiedClassName(object)) : "") + " " + _text;
 			
 			if (enableDisplay) {
-				_output.appendText("\n" + _text);
+				_output.text =  _text + "\n" + _output.text;
 			}
+			
 			trace(_text);
 		}
 		

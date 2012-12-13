@@ -3,17 +3,17 @@ package com.ad.games.fc2
 	import com.ad.games.fc2.model.ApplicationContext;
 	import com.ad.games.fc2.view.starling.screen.ScreenContainer;
 	import com.ad.games.fc2.view.utils.Console;
+	import com.ad.games.fc2.view.utils.DeviceProperties;
 	
-	import flash.desktop.NativeApplication;
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.display3D.Context3DRenderMode;
 	import flash.events.Event;
 	import flash.geom.Rectangle;
+	import flash.system.Capabilities;
 	
 	import starling.core.Starling;
-	import starling.events.ResizeEvent;
 	
 	[SWF(width="960", height="640", wmode="direct", backgroundAlpha=0)]
 	public class Application extends Sprite
@@ -45,31 +45,40 @@ package com.ad.games.fc2
 			}
 			
 			stage.frameRate = 1000 / GlobalConfig.UPDATE_TIMEOUT_NORMAL;
-			//stage.quality = GlobalConfig.QUALITY_NORMAL;
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.align = StageAlign.TOP_LEFT;
-			//stage.autoOrients = false;
+						
+			stage.addEventListener(Event.RESIZE, handleResize);
+			handleResize();
 			
 			draw();
 		}
 		
+		private function handleResize(...ig) :void {
+
+			Console.append("stage " + stage.stageWidth + " x " + stage.stageHeight, this);
+			Console.append("stage screen " + stage.fullScreenWidth + " x " +  stage.fullScreenHeight, this);
+			Console.append("device screen " + Capabilities.screenResolutionX + " x " +  Capabilities.screenResolutionY + " dpi=" + Capabilities.screenDPI, this);
+		}
+		
+		// call handleResize to initialize the first time
+				
+		
 		private function draw():void
 		{
-			_context.setNation(GlobalConfig.NATIONS[GlobalConfig.DEFAULT_NATION_ID]);
 			Console.attach(this).y = 25;
-			
 			Console.append("draw start", this);
 			
+			_context.setNation(GlobalConfig.NATIONS[GlobalConfig.DEFAULT_NATION_ID]);
+						
 			Starling.multitouchEnabled = true;
 			
-			Console.append(stage.stageWidth + " x " + stage.stageHeight);
-			
-			var viewPort:Rectangle = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
-			
+			var viewPort:Rectangle = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);			
 			_canvas = new Starling(ScreenContainer, stage, viewPort, null, Context3DRenderMode.AUTO, "baseline");
 			_canvas.showStats = true;
 			//_canvas.antiAliasing = 1;
-			_canvas.simulateMultitouch  = true;
+			
+			_canvas.simulateMultitouch  = !DeviceProperties.isTouchInterface();
 			_canvas.start();
 			
 			Console.append("draw end", this);

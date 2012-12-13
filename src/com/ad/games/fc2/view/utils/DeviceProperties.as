@@ -2,6 +2,7 @@ package com.ad.games.fc2.view.utils
 {
 	import com.ad.games.fc2.Application;
 	
+	import flash.geom.Rectangle;
 	import flash.system.Capabilities;
 	import flash.system.TouchscreenType;
 
@@ -9,28 +10,15 @@ package com.ad.games.fc2.view.utils
 	{
 		public static function isTouchInterface():Boolean
 		{
-			return Capabilities.touchscreenType == TouchscreenType.FINGER;
+			return Capabilities.touchscreenType != TouchscreenType.NONE;
 		}
 		
-		private static var screenWidth:int;
-		private static var screenHeight:int;
-		
-		public static function getSreenWidth():int
+		public static function getScreenSize():Rectangle
 		{
-			if (!screenWidth) {
-				screenWidth = Math.max(Capabilities.screenResolutionX, Capabilities.screenResolutionY);
-				screenWidth = Math.min(Application.getInstance().stage.stageWidth, screenWidth);
-			}
-			return screenWidth;
-		}
-		
-		public static function getSreenHeight():int
-		{
-			if (!screenHeight) {
-				screenHeight = Math.min(Capabilities.screenResolutionY, Capabilities.screenResolutionX);
-				screenHeight = Math.min(Application.getInstance().stage.stageHeight, screenHeight);
-			}
-			return screenHeight;
+			var width:Number = (Application.getInstance().stage.stageWidth > Application.getInstance().stage.fullScreenWidth) ? Application.getInstance().stage.fullScreenWidth : Application.getInstance().stage.stageWidth;
+			var height:Number = (Application.getInstance().stage.stageHeight > Application.getInstance().stage.fullScreenHeight) ? Application.getInstance().stage.fullScreenHeight : Application.getInstance().stage.stageHeight;
+			
+			return new Rectangle(0 , 0, width, height);
 		}
 	}
 }

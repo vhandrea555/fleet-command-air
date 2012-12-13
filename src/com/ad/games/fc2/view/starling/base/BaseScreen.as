@@ -6,5 +6,11 @@ package com.ad.games.fc2.view.starling.base
 		{
 			super();
 		}
+		
+		protected override function draw():void {
+			super.draw();
+			width = parent.width;
+			height = parent.height;			
+		}
 	}
 }
