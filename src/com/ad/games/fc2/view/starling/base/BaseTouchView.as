@@ -31,6 +31,11 @@ package com.ad.games.fc2.view.starling.base
 		{
 			var touches:Vector.<Touch> = event.getTouches(this, TouchPhase.MOVED);
 			
+			
+			//TODO: performance on iOS
+			//TODO: custom zoom (without pivot modification)
+			//TODO: zoom boundaries
+			
 			if (touches.length == 1)
 			{
 				// one finger touching -> move
