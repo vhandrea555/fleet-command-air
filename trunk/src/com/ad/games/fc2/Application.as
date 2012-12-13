@@ -15,8 +15,8 @@ package com.ad.games.fc2
 	
 	import starling.core.Starling;
 	
-	[SWF(width="960", height="640", wmode="direct", backgroundAlpha=0)]
-	public class Application extends Sprite
+	[SWF(width="960", height="640", wmode="direct")]
+	public final class Application extends Sprite
 	{
 		private static var _instance:Application;
 		private static var _context:ApplicationContext = new ApplicationContext();
@@ -54,7 +54,7 @@ package com.ad.games.fc2
 			draw();
 		}
 		
-		private function handleResize(...ig) :void {
+		private function handleResize() :void {
 
 			Console.append("stage " + stage.stageWidth + " x " + stage.stageHeight, this);
 			Console.append("stage screen " + stage.fullScreenWidth + " x " +  stage.fullScreenHeight, this);
@@ -66,17 +66,21 @@ package com.ad.games.fc2
 		
 		private function draw():void
 		{
-			Console.attach(this).y = 25;
+			if (GlobalConfig.SHOW_CONSOLE) {
+				Console.attach(this).y = 25;
+			}
 			Console.append("draw start", this);
 			
 			_context.setNation(GlobalConfig.NATIONS[GlobalConfig.DEFAULT_NATION_ID]);
 						
 			Starling.multitouchEnabled = true;
 			
+			Console.append("stage " + stage.stageWidth + " x " + stage.stageHeight, this);
+			
 			var viewPort:Rectangle = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);			
 			_canvas = new Starling(ScreenContainer, stage, viewPort, null, Context3DRenderMode.AUTO, "baseline");
-			_canvas.showStats = true;
-			//_canvas.antiAliasing = 1;
+			_canvas.showStats = GlobalConfig.SHOW_RENDERER_STATS;
+			_canvas.antiAliasing = GlobalConfig.DEFAULT_ANTIALIASING;
 			
 			_canvas.simulateMultitouch  = !DeviceProperties.isTouchInterface();
 			_canvas.start();
