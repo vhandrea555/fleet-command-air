@@ -14,6 +14,7 @@ package com.ad.games.fc2
 	import flash.system.Capabilities;
 	
 	import starling.core.Starling;
+	import com.ad.games.fc2.config.GlobalConfig;
 	
 	[SWF(width="960", height="640", wmode="direct")]
 	public final class Application extends Sprite

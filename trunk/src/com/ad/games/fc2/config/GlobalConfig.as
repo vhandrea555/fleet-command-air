@@ -1,4 +1,4 @@
-package com.ad.games.fc2
+package com.ad.games.fc2.config
 {
 	import com.ad.games.fc2.model.Nation;
 	

@@ -1,5 +1,32 @@
 package com.ad.games.fc2.view.starling.map.object
 {
+	import com.ad.games.fc.Resources;
+	import com.ad.games.fc.SoundController;
+	import com.ad.games.fc.utils.Geometry;
+	import com.ad.games.fc.view.utils.Rasterizer;
+	import com.ad.games.fc2.config.GlobalConfig;
+	import com.ad.games.fc2.model.ship.Ship;
+	import com.ad.games.fc2.model.ship.equipment.Equipment;
+	import com.ad.games.fc2.utils.path.PathPoint;
+	import com.ad.games.fc2.view.starling.map.MapCursor;
+	import com.ad.games.fc2.view.starling.map.MapLayer;
+	import com.ad.games.fc2.view.starling.map.MapView;
+	import com.ad.games.fc2.view.starling.map.object.shape.MapEquipmentShape;
+	import com.ad.games.fc2.view.starling.map.object.shape.MapShipHullShape;
+	import com.ad.games.fc2.view.starling.map.object.shape.MapTubeShape;
+	
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
+	import flash.display.GraphicsPathCommand;
+	import flash.geom.Point;
+	import flash.geom.Rectangle;
+	import flash.media.Sound;
+	import flash.utils.setTimeout;
+	
+	import starling.display.DisplayObject;
+	import starling.display.Sprite;
+	import starling.events.Event;
+	import starling.text.TextField;
 
 	public final class ShipMapLayerObject extends MapLayerMovingObject
 	{
@@ -28,7 +55,7 @@ package com.ad.games.fc2.view.starling.map.object
 		private static var _gSmokeBitmap:Bitmap;		
 		private static var _gIsDecalsRendered:Boolean = false;
 		private static var _gDecalsCount:uint = 0;
-		private const LABEL_STYLE:TextFormat = new TextFormat("Arial", Application.getSreenWidth()*0.02, 0);
+		//private const LABEL_STYLE:TextFormat = new TextFormat("Arial", Application.getSreenWidth()*0.02, 0);
 		
 		/*
 		 * Private properies
@@ -72,7 +99,7 @@ package com.ad.games.fc2.view.starling.map.object
 			
 			gDrawDecals();
 			
-			_frontWaveShape = Rasterizer.clone(_gFrontWaveBitmap);
+			//_frontWaveShape = Rasterizer.clone(_gFrontWaveBitmap);
 			_frontWaveShape.visible = false;			
 			
 			_shape = _ship.getMapShape();
@@ -82,16 +109,16 @@ package com.ad.games.fc2.view.starling.map.object
 			
 			drawEquipmentShapes(_ship.getMapShape(), _ship.getEquipment());
 			
-			_label = new TextField();
+			//_label = new TextField();
+			/*
 			_label.setTextFormat(LABEL_STYLE);
 			_label.defaultTextFormat = LABEL_STYLE;
 			_label.textColor = _ship.getNation().getColor();
 			_label.autoSize = TextFieldAutoSize.NONE;
-						
+			*/		
 			_label.x = GlobalConfig.MAP_CELL_SIZE/2;
 			_label.y = -GlobalConfig.MAP_CELL_SIZE/4;
-			//_label.autoSize = TextFieldAutoSize.LEFT;
-			_label.selectable = false;			
+			//_label.selectable = false;			
 			_label.text = _ship.getName();			
 			addChild(_label);
 			
@@ -134,20 +161,23 @@ package com.ad.games.fc2.view.starling.map.object
 			if (!_gIsDecalsRendered) {
 				_gIsDecalsRendered = true;
 				var _gSmokeSprite:Sprite = new Sprite();
+				/*
 				_gSmokeSprite.graphics.beginFill(0x000000);
 				_gSmokeSprite.graphics.drawCircle(0, 0, 5);
 				_gSmokeSprite.graphics.endFill();
-				_gSmokeBitmap = Rasterizer.toBitmap(_gSmokeSprite, Rasterizer.HALIGN_CENTER + Rasterizer.VALIGN_MIDDLE);
+				*/
+				//_gSmokeBitmap = Rasterizer.toBitmap(_gSmokeSprite, Rasterizer.HALIGN_CENTER + Rasterizer.VALIGN_MIDDLE);
 			}
 			
+			/*
 			_traceMask = new Sprite();
 			_traceMask.graphics.beginGradientFill(GradientType.RADIAL, [0xFFFFFF, 0xFFFFFF], [1,0], [0, 128]);
 			_traceMask.graphics.drawRect(-GlobalConfig.MAP_CELL_SIZE, -GlobalConfig.MAP_CELL_SIZE*0.75, GlobalConfig.MAP_CELL_SIZE, GlobalConfig.MAP_CELL_SIZE*1.5);
 			_traceMask.graphics.endFill();
 			_traceMask.cacheAsBitmap = true;
-			
+			*/
 			_trace = new Sprite();
-			_trace.mask = _traceMask;
+			//_trace.mask = _traceMask;
 			_trace.visible = false;
 			
 			_traceContainer = new Sprite();
@@ -155,7 +185,7 @@ package com.ad.games.fc2.view.starling.map.object
 			_traceContainer.addChild(_trace);
 						
 			_traceBitmap = new Bitmap();
-			Map.getInstance().getSelectionContainer().addChild(_traceBitmap);
+			//MapView.getInstance().getSelectionContainer().addChild(_traceBitmap);
 		}
 		
 		/*
@@ -184,10 +214,12 @@ package com.ad.games.fc2.view.starling.map.object
 		
 		private function cacheShape():void
 		{
+			/*
 			if (_shapeCacheBitmap && _shapeCacheBitmap.visible)
 				removeChild(_shapeCacheBitmap);
-			_shapeCacheBitmap = Rasterizer.toBitmap(_shape, Rasterizer.HALIGN_CENTER + Rasterizer.VALIGN_MIDDLE, Map.getInstance().scaleX);
+			_shapeCacheBitmap = Rasterizer.toBitmap(_shape, Rasterizer.HALIGN_CENTER + Rasterizer.VALIGN_MIDDLE, MapView.getInstance().scaleX);
 			addChild(_shapeCacheBitmap);
+			*/
 			_shapeCacheBitmap.x = _shapeCacheBitmap.x + GlobalConfig.MAP_CELL_SIZE/2;
 			_shapeCacheBitmap.y = _shapeCacheBitmap.y + GlobalConfig.MAP_CELL_SIZE/2;
 		}
@@ -195,7 +227,7 @@ package com.ad.games.fc2.view.starling.map.object
 		private function cacheEquipmentShapes():void
 		{
 			for (var i:uint=0; i<_equipmentShapes.length; i++) {
-				_equipmentShapes[i].cache(Map.getInstance().scaleX);
+				//_equipmentShapes[i].cache(MapView.getInstance().scaleX);
 			}			
 		}		
 		
@@ -225,7 +257,7 @@ package com.ad.games.fc2.view.starling.map.object
 			var _tDy:Number = 0;			
 			var _minX:Number = Number.MAX_VALUE;
 			var _minY:Number = Number.MAX_VALUE;
-			var _mapScale:Number = Map.getInstance().scaleX;
+			var _mapScale:Number = MapView.getInstance().scaleX;
 			
 			_traceContainer.scaleX = 1/_mapScale;
 			_traceContainer.scaleY = 1/_mapScale;
@@ -244,10 +276,11 @@ package com.ad.games.fc2.view.starling.map.object
 			/*
 			 * Setting draw style for wide trace
 			 */
+			/*
 			_trace.cacheAsBitmap = false;
 			_trace.graphics.clear();
 			_trace.graphics.lineStyle(_hullHeight, 0xFFFFFF, 0.75);
-			
+			*/
 			/*
 			 * Calculating trace canvas offset
 			 */
@@ -259,7 +292,7 @@ package com.ad.games.fc2.view.starling.map.object
 			 * Setting draw pointer to start position
 			 */
 			_p = Geometry.translate(new Point(-_hullWidth/2, 0), _shape.rotation);
-			_trace.graphics.moveTo(_p.x + _tDx, _p.y + _tDy);
+			//_trace.graphics.moveTo(_p.x + _tDx, _p.y + _tDy);
 			_drawCommands.length = 0;
 			_drawPoints.length = 0;
 			
@@ -281,14 +314,14 @@ package com.ad.games.fc2.view.starling.map.object
 			/*
 			 * Drawing first (wide) trace
 			 */
-			_trace.graphics.drawPath(_drawCommands, _drawPoints);
+			//_trace.graphics.drawPath(_drawCommands, _drawPoints);
 			
 			/*
 			 * Setting draw style for thick trace
 			 */
-			_trace.graphics.lineStyle(_hullHeight/2, 0xFFFFFF, 0.75);			
+			//_trace.graphics.lineStyle(_hullHeight/2, 0xFFFFFF, 0.75);			
 			_p = Geometry.translate(new Point(-_hullWidth/2, 0), _shape.rotation);
-			_trace.graphics.moveTo(_p.x + _tDx, _p.y + _tDy);
+			//_trace.graphics.moveTo(_p.x + _tDx, _p.y + _tDy);
 			_drawCommands.length = 0;
 			_drawPoints.length = 0;
 			
@@ -309,8 +342,8 @@ package com.ad.games.fc2.view.starling.map.object
 			/*
 			 * Drawing second (thick) trace
 			 */
-			_trace.graphics.drawPath(_drawCommands, _drawPoints);			
-			_trace.cacheAsBitmap = true;
+			//_trace.graphics.drawPath(_drawCommands, _drawPoints);			
+			//_trace.cacheAsBitmap = true;
 			
 			/*
 			 * Initiating sprites array
@@ -321,9 +354,9 @@ package com.ad.games.fc2.view.starling.map.object
 				_traceShapes.length = 0;
 			}
 			
-			Map.getInstance().getSelectionContainer().addChild(_traceContainer);
-			_traceContainer.x = (-Map.getInstance().x ) / _mapScale;
-			_traceContainer.y = (-Map.getInstance().y ) / _mapScale;
+			MapView.getInstance().getSelectionContainer().addChild(_traceContainer);
+			_traceContainer.x = (-MapView.getInstance().x ) / _mapScale;
+			_traceContainer.y = (-MapView.getInstance().y ) / _mapScale;
 			
 			/*
 			 * Filling sprites array
@@ -336,13 +369,13 @@ package com.ad.games.fc2.view.starling.map.object
 					_traceMask.y = _point.y + _tDy + _p.y;
 					_traceMask.rotation = _point.rotation;
 					_trace.alpha = 0.1 + (_point.speed / _maxSpeed) * 0.8; 
-					_traceShapes.push(Rasterizer.toBitmapData(_trace));
+					//_traceShapes.push(Rasterizer.toBitmapData(_trace));
 				}
 			}
 			
-			Map.getInstance().getSelectionContainer().removeChild(_traceContainer);
+			MapView.getInstance().getSelectionContainer().removeChild(_traceContainer);
 			
-			_trace.graphics.clear();
+			//_trace.graphics.clear();
 			_traceShapes.reverse();
 			
 			_traceBitmap.x = x + GlobalConfig.MAP_CELL_SIZE/2 - _tDx;
@@ -445,7 +478,7 @@ package com.ad.games.fc2.view.starling.map.object
 		{
 			_gDecalsCount++;
 			
-			var smoke:DisplayObject = Rasterizer.clone(_gSmokeBitmap);
+			var smoke:DisplayObject// = Rasterizer.clone(_gSmokeBitmap);
 			smoke.width = smoke.width * (0.75 + dSpeed/4);
 			smoke.height = smoke.height * (1 - dSpeed/2);
 			_p = Geometry.translate(new Point(_equipmentShape.x/2 - _equipmentShape.width/4 - smoke.width, _equipmentShape.y/2 - smoke.height/2), point.rotation);
@@ -455,12 +488,12 @@ package com.ad.games.fc2.view.starling.map.object
 			smoke.rotation = point.rotation;
 			smoke.alpha = 0.15 + (dSpeed)/3;
 			
-			Map.getInstance().getLayersContainer().addChild(smoke);
+			MapView.getInstance().getLayersContainer().addChild(smoke);
 			
 			setTimeout(
 				function():void {
 					smoke.visible = false;
-					Map.getInstance().getLayersContainer().removeChild(smoke);
+					MapView.getInstance().getLayersContainer().removeChild(smoke);
 					smoke = null;
 					_gDecalsCount--;
 				}
@@ -491,7 +524,7 @@ package com.ad.games.fc2.view.starling.map.object
 				var target:ShipMapLayerObject = _ships[i]; 
 				if (this != target) {
 					
-					range = Geometry.getRange(this, target);
+					//range = Geometry.getRange(this, target);
 					
 					if (range < GlobalConfig.MAP_CELL_SIZE*2) {
 						// do not calculate for very distant ships
@@ -587,7 +620,7 @@ package com.ad.games.fc2.view.starling.map.object
 				&&
 				ShipMapLayerObject(_layer.getActiveObject()).getShip().getNation() != _ship.getNation()
 			) {
-				Map.getInstance().getCursor().setState(MapCursor.STATE_TARGET);
+				MapView.getInstance().getCursor().setState(MapCursor.STATE_TARGET);
 			}			
 		}
 		
@@ -604,7 +637,7 @@ package com.ad.games.fc2.view.starling.map.object
 		
 		public override function isSelectable():Boolean
 		{
-			return super.isSelectable() && (_ship.getNation() == Application.getContext().getNation());
+			return super.isSelectable() ;//&& (_ship.getNation() == Application.getContext().getNation());
 		}
 		
 		public function getShip():Ship
@@ -620,15 +653,17 @@ package com.ad.games.fc2.view.starling.map.object
 						if (_state != STATE_MOVING) {
 							
 							_label.visible = true;
-							_label.scaleX = 1/Map.getInstance().scaleX;
-							_label.scaleY = 1/Map.getInstance().scaleY;
-													
-							if (_mode == MODE_ANIMATION || Map.getInstance().getMode() == Map.MODE_SCALE) {
+							_label.scaleX = 1/MapView.getInstance().scaleX;
+							_label.scaleY = 1/MapView.getInstance().scaleY;
+							
+							/*
+							if (_mode == MODE_ANIMATION || MapView.getInstance().getMode() == Map.MODE_SCALE) {
 								if (_mode != MODE_ANIMATION) {
 									cacheEquipmentShapes();
 								}
 								cacheShape();
 							}
+							*/
 							
 							if (_shape.visible) {
 								//removeChild(_shape);
@@ -636,7 +671,7 @@ package com.ad.games.fc2.view.starling.map.object
 							}
 							
 							if (!_shapeCacheBitmap.visible) {
-								addChild(_shapeCacheBitmap);
+								//addChild(_shapeCacheBitmap);
 								_shapeCacheBitmap.visible = true;
 							}
 							super.setMode(mode);
@@ -651,7 +686,7 @@ package com.ad.games.fc2.view.starling.map.object
 							}
 							
 							if (!_shapeCacheBitmap.visible) {
-								addChild(_shapeCacheBitmap);
+								//addChild(_shapeCacheBitmap);
 								_shapeCacheBitmap.visible = true;
 							}
 							super.setMode(mode);
@@ -666,7 +701,7 @@ package com.ad.games.fc2.view.starling.map.object
 						}
 						
 						if (_shapeCacheBitmap.visible) {
-							removeChild(_shapeCacheBitmap);
+							//removeChild(_shapeCacheBitmap);
 							_shapeCacheBitmap.visible = false;
 						}
 						

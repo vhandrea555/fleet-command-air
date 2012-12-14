@@ -1,7 +1,7 @@
 package com.ad.games.fc2.view.starling.base
 {
 	import com.ad.games.fc2.Application;
-	import com.ad.games.fc2.GlobalConfig;
+	import com.ad.games.fc2.config.GlobalConfig;
 	import com.ad.games.fc2.view.utils.Console;
 	
 	import flash.events.MouseEvent;

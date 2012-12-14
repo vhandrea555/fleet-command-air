@@ -1,5 +1,22 @@
 package com.ad.games.fc2.view.starling.map.object
 {
+	import com.ad.games.fc.utils.Geometry;
+	import com.ad.games.fc2.config.GlobalConfig;
+	import com.ad.games.fc2.utils.path.Path;
+	import com.ad.games.fc2.utils.path.PathPoint;
+	import com.ad.games.fc2.view.starling.map.MapCell;
+	import com.ad.games.fc2.view.starling.map.MapCursor;
+	import com.ad.games.fc2.view.starling.map.MapLayer;
+	import com.ad.games.fc2.view.starling.map.MapView;
+	import com.ad.games.fc2.view.starling.map.object.MapLayerObject;
+	import com.ad.games.fc2.view.starling.map.object.MapPath;
+	
+	import flash.events.TimerEvent;
+	import flash.geom.Point;
+	import flash.utils.Timer;
+	import flash.utils.setTimeout;
+	
+	import starling.events.Event;
 
 
 	public class MapLayerMovingObject extends MapLayerObject
@@ -39,7 +56,7 @@ package com.ad.games.fc2.view.starling.map.object
 			_movePath.setMaxLength(2*_maxSpeed*GlobalConfig.MAP_CELL_SIZE);			
 			_path = new MapPath(this);
 			_path.setMaxLength(2*_maxSpeed*GlobalConfig.MAP_CELL_SIZE);			
-			_timer = new Timer(Application.UPDATE_TIMEOUT_LOW, 0);
+			_timer = new Timer(GlobalConfig.UPDATE_TIMEOUT_LOW, 0);
 			_mapLayerMovingObjects.push(this);
 		}
 		
@@ -56,13 +73,13 @@ package com.ad.games.fc2.view.starling.map.object
 			super.select(select);
 			
 			if (_selected) {
-				_layer.addEventListener(Map.EVENT_MOUSE_UP, onCellMouseUp);
-				Map.getInstance().addEventListener(Map.EVENT_ACTIVE_CELL, onActiveCell);
-				Map.getInstance().getCursor().setState(MapCursor.STATE_ORDER);
+				_layer.addEventListener(MapView.EVENT_MOUSE_UP, onCellMouseUp);
+				MapView.getInstance().addEventListener(MapView.EVENT_ACTIVE_CELL, onActiveCell);
+				MapView.getInstance().getCursor().setState(MapCursor.STATE_ORDER);
 			} else {
-				_layer.removeEventListener(Map.EVENT_MOUSE_UP, onCellMouseUp);
-				Map.getInstance().removeEventListener(Map.EVENT_ACTIVE_CELL, onActiveCell);
-				Map.getInstance().getCursor().setState(MapCursor.STATE_SELECT);
+				_layer.removeEventListener(MapView.EVENT_MOUSE_UP, onCellMouseUp);
+				MapView.getInstance().removeEventListener(MapView.EVENT_ACTIVE_CELL, onActiveCell);
+				MapView.getInstance().getCursor().setState(MapCursor.STATE_SELECT);
 			}
 		}
 		
@@ -71,19 +88,18 @@ package com.ad.games.fc2.view.starling.map.object
 		protected function onCellMouseUp(e:Event):void
 		{
 			if (_selected) {
-				var cell:MapCell = Map.getInstance().getActiveCell();
+				var cell:MapCell = MapView.getInstance().getActiveCell();
 				if (cell != _cell) {
-					if (Map.getInstance().getCursor().getState() != MapCursor.STATE_RESTRICTED) {
+					if (MapView.getInstance().getCursor().getState() != MapCursor.STATE_RESTRICTED) {
 						var point:PathPoint = cell.getPathPoint().substract(getPathPoint());
 						if (cell.isSelected() && !_path.getLastPoint().equals(point)) {
 							_path.removePoint(point);
 							_path.update();
 						} else if (cell.isSelected()) {
-							//move();
 						} else {
 							pathToCell(cell);
 						}
-					} else if (Map.getInstance().getCursor().getState() == MapCursor.STATE_RESTRICTED) {
+					} else if (MapView.getInstance().getCursor().getState() == MapCursor.STATE_RESTRICTED) {
 						_layer.deSelectObject();
 					}
 				}
@@ -93,7 +109,7 @@ package com.ad.games.fc2.view.starling.map.object
 		protected function onActiveCell(e:Event):void
 		{
 			if (_selected) {
-				var cell:MapCell = Map.getInstance().getActiveCell();
+				var cell:MapCell = MapView.getInstance().getActiveCell();
 				var dX:Number = cell.x - _path.getLastPoint().add(getPathPoint()).x;
 				var dY:Number = cell.y - _path.getLastPoint().add(getPathPoint()).y;
 				var radius:Number = Geometry.getRadius(-dX, -dY);
@@ -119,10 +135,11 @@ package com.ad.games.fc2.view.starling.map.object
 			super.update();
 			
 			if (_selected) {
-				if (Map.getInstance().getMode() == Map.MODE_DEFAULT) {					
-					var cell:MapCell = Map.getInstance().getActiveCell();
+				/*
+				if (MapView.getInstance().getMode() == MapView.MODE_DEFAULT) {					
+					var cell:MapCell = MapView.getInstance().getActiveCell();
 					if (cell.isSelected() && _path.hasPoint(cell.getPathPoint().substract(getPathPoint()))) {
-						Map.getInstance().getCursor().setState(MapCursor.STATE_ORDER);					
+						MapView.getInstance().getCursor().setState(MapCursor.STATE_ORDER);					
 					} else if (_showPath && _cell != cell && _state != STATE_MOVING) {
 						_displayPath.setStart(_path.getLastPoint());
 						_displayPath.setEnd(
@@ -136,18 +153,19 @@ package com.ad.games.fc2.view.starling.map.object
 							graphics.clear();
 							graphics.moveTo(_displayPath.getStart().x + GlobalConfig.MAP_CELL_SIZE/2, _displayPath.getStart().y + GlobalConfig.MAP_CELL_SIZE/2);
 							MapPath.drawPath(graphics, _displayPath, GlobalConfig.MAP_CELL_SIZE/2, GlobalConfig.MAP_CELL_SIZE/2);
-							if (Map.getInstance().getCursor().getState() != MapCursor.STATE_ORDER) {
-								Map.getInstance().getCursor().setState(MapCursor.STATE_ORDER);
+							if (MapView.getInstance().getCursor().getState() != MapCursor.STATE_ORDER) {
+								MapView.getInstance().getCursor().setState(MapCursor.STATE_ORDER);
 							}
-						} else if (Map.getInstance().getCursor().getState() != MapCursor.STATE_RESTRICTED) {
+						} else if (MapView.getInstance().getCursor().getState() != MapCursor.STATE_RESTRICTED) {
 							graphics.clear();
-							Map.getInstance().getCursor().setState(MapCursor.STATE_RESTRICTED);
+							MapView.getInstance().getCursor().setState(MapCursor.STATE_RESTRICTED);
 						}
-					} else if (Map.getInstance().getCursor().getState() != MapCursor.STATE_RESTRICTED) {
+					} else if (MapView.getInstance().getCursor().getState() != MapCursor.STATE_RESTRICTED) {
 						graphics.clear();
-						Map.getInstance().getCursor().setState(MapCursor.STATE_RESTRICTED);
+						MapView.getInstance().getCursor().setState(MapCursor.STATE_RESTRICTED);
 					}
 				}
+				*/
 			}
 		}
 		
@@ -227,15 +245,7 @@ package com.ad.games.fc2.view.starling.map.object
 			if (_state != STATE_DEFAULT) {
 				_state = STATE_DEFAULT;
 				
-				/*
-				var p:PathPoint = _movePath.getEnd().add(_cell.getPathPoint());
-				
-				x = Math.round(p.x);
-				y = Math.round(p.y);
-				*/
-				
-				//_cell = _path.getCells()[_path.getCells().length - 1];
-				_cell = Map.getInstance().getCellAt(x + GlobalConfig.MAP_CELL_SIZE/2, y + GlobalConfig.MAP_CELL_SIZE/2);
+				_cell = MapView.getInstance().getCellAt(new Point(x + GlobalConfig.MAP_CELL_SIZE/2, y + GlobalConfig.MAP_CELL_SIZE/2));
 				
 				_path.clear();
 				_path.update();
@@ -276,7 +286,6 @@ package com.ad.games.fc2.view.starling.map.object
 		
 		public function getPathPoint():PathPoint
 		{
-			//var point:PathPoint = _cell.getPathPoint();
 			var point:PathPoint = new PathPoint(x, y);
 			point.rotation = _shape.rotation;
 			return point;
@@ -290,7 +299,7 @@ package com.ad.games.fc2.view.starling.map.object
 						update();
 						break;
 					case MODE_TRANSFORMATION:
-						graphics.clear();
+						//graphics.clear();
 						break;
 				}
 			}

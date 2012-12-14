@@ -1,5 +1,13 @@
 package com.ad.games.fc2.view.starling.map.object
 {
+	import com.ad.games.fc2.utils.path.Path;
+	import com.ad.games.fc2.utils.path.PathPoint;
+	import com.ad.games.fc2.view.starling.base.BaseView;
+	import com.ad.games.fc2.view.starling.map.MapCell;
+	import com.ad.games.fc2.view.starling.map.MapView;
+	
+	import flash.display.Graphics;
+	import flash.geom.Point;
 	
 	public final class MapPath extends BaseView
 	{
@@ -27,11 +35,13 @@ package com.ad.games.fc2.view.starling.map.object
 		{
 			super.update();
 			
+			/*
 			graphics.clear();
 			
 			for (var i:int = 0; i<_pathes.length; i++) {
 				drawPath(graphics, Path(_pathes[i]));
 			}
+			*/
 		}
 		
 		public function updatePathes():void
@@ -67,7 +77,7 @@ package com.ad.games.fc2.view.starling.map.object
 			
 			_length += path.getLength();
 			
-			var cell:MapCell = Map.getInstance().getCellAt(point.x + _object.x, point.y + _object.y);
+			var cell:MapCell = MapView.getInstance().getCellAt(new Point(point.x + _object.x, point.y + _object.y));
 			_cells.push(cell);
 			cell.select(true);
 		}
