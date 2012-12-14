@@ -1,5 +1,10 @@
 package com.ad.games.fc2.view.starling.map.object.shape
 {
+	import com.ad.games.fc2.model.ship.Ship;
+	import com.ad.games.fc2.model.ship.equipment.Equipment;
+	
+	import starling.display.DisplayObject;
+
 	public class MapEquipmentShape extends MapShape
 	{
 		protected var _parent:Equipment;

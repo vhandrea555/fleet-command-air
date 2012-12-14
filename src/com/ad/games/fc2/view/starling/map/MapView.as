@@ -1,6 +1,6 @@
 package com.ad.games.fc2.view.starling.map
 {
-	import com.ad.games.fc2.GlobalConfig;
+	import com.ad.games.fc2.config.GlobalConfig;
 	import com.ad.games.fc2.view.starling.base.BaseTouchView;
 	import com.ad.games.fc2.view.starling.map.object.MapLayerObject;
 	

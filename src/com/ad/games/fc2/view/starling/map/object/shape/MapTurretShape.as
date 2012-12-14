@@ -1,5 +1,17 @@
 package com.ad.games.fc2.view.starling.map.object.shape
 {
+	import com.ad.games.fc.utils.Geometry;
+	import com.ad.games.fc2.model.ship.Ship;
+	import com.ad.games.fc2.model.ship.equipment.Equipment;
+	import com.ad.games.fc2.model.ship.equipment.Turret;
+	import com.ad.games.fc2.view.starling.map.MapView;
+	
+	import flash.display.Bitmap;
+	import flash.geom.Point;
+	import flash.utils.setTimeout;
+	
+	import starling.display.DisplayObject;
+
 	public final class MapTurretShape extends MapEquipmentShape
 	{
 		private var _p1:Point;
@@ -45,12 +57,7 @@ package com.ad.games.fc2.view.starling.map.object.shape
 				_p1 = _parent.getMapShape().localToGlobal(new Point(0,0));
 				_p2 = _target.getMapShape().localToGlobal(new Point(0,0));
 				
-				//trace(_p1 + " / " + _p2);
-				
 				_angle = Geometry.fromRadsToDegrees(Math.atan2(_p2.y-_p1.y,_p2.x-_p1.x));
-				
-				//trace(_angle + " / " + _parent.getShip().getMapShape().rotation);
-				
 				_angle = _angle - _parent.getShip().getMapShape().rotation;
 				_angle = Geometry.normalizeAngle(_angle);
 				
@@ -64,7 +71,6 @@ package com.ad.games.fc2.view.starling.map.object.shape
 				if (Math.abs(_dAngle) > _angleSpeed) {
 					
 					_rotation = rotation + _angleSpeed * Geometry.getSign(_dAngle);
-					//_rotation = Geometry.normalizeAngle(_rotation);
 					_rotation = Math.round(Geometry.limitAngle(_rotation, _minAngle, _maxAngle));
 					
 					_fireDelay++;
@@ -74,13 +80,6 @@ package com.ad.games.fc2.view.starling.map.object.shape
 					_fireDelay++;
 				} else {
 					if (_limitedAngle == _angle && _fireDelay%(_fireDelayLimit + 1) == _fireDelayNumber) {
-					//if (_limitedAngle == _angle && _fireDelay >= _fireDelayLimit) {
-						/*
-						for (var i:uint = 1; i<numChildren; i++) {
-							fire(getChildAt(i));
-						}
-						*/
-						
 						fire();
 					} else {
 						_fireDelay++;
@@ -88,19 +87,14 @@ package com.ad.games.fc2.view.starling.map.object.shape
 				}
 					
 				
-				//trace(_angle + " / " + _dAngle + " / " + _rotation);
-				
 				if (_rotation != rotation) rotation = _rotation;
-				
-				//trace(_angle);
-				//rotation = _angle;
 			}
 		}
 		
 		public function fire():void
 		{
+			/*
 			_gShellsCount++;
-			//trace(_gShellsCount);
 			var fire:DisplayObject = Rasterizer.clone(_gFireBitmap);
 			var _dY:Number = getChildAt(1).y - getChildAt(numChildren-1).y;
 			fire.height = fire.height + Math.abs(_dY);
@@ -108,19 +102,15 @@ package com.ad.games.fc2.view.starling.map.object.shape
 			var barrel:DisplayObject = getChildAt(1);
 			var p:Point = barrel.localToGlobal(new Point(barrel.width + fire.width/2, fire.height/2 - (barrel.y - Math.abs(_dY)/2)));
 			
-			fire.x = p.x / Map.getInstance().scaleX - Map.getInstance().x / Map.getInstance().scaleX;
-			fire.y = p.y / Map.getInstance().scaleY - Map.getInstance().y / Map.getInstance().scaleY;
-			//fire.rotation = rotation + _parent.getShip().getMapShape().rotation;
+			fire.x = p.x / MapView.getInstance().scaleX - MapView.getInstance().x / MapView.getInstance().scaleX;
+			fire.y = p.y / MapView.getInstance().scaleY - MapView.getInstance().y / MapView.getInstance().scaleY;
 			
-			Map.getInstance().getLayersContainer().addChild(fire);
+			MapView.getInstance().getLayersContainer().addChild(fire);
 			
 			var _this:MapTurretShape = this;
 			
 			setTimeout(
 				function():void {
-					//fire.visible = false;
-					//Map.getInstance().getLayersContainer().removeChild(fire);
-					//fire = null;
 					_this.showSmoke(fire);
 				}
 				, 75
@@ -130,6 +120,7 @@ package com.ad.games.fc2.view.starling.map.object.shape
 			_fireDelay = 0;
 			
 			SoundController.cannonFirePrimary();
+			*/
 		}
 		
 		private function showSmoke(fire:DisplayObject):void
@@ -139,7 +130,7 @@ package com.ad.games.fc2.view.starling.map.object.shape
 			setTimeout(
 				function():void {
 					fire.visible = false;
-					Map.getInstance().getLayersContainer().removeChild(fire);
+					MapView.getInstance().getLayersContainer().removeChild(fire);
 					fire = null;
 				}
 				, 150
@@ -150,8 +141,7 @@ package com.ad.games.fc2.view.starling.map.object.shape
 		{
 			if (!_gIsDecalsRendered) {
 				_gIsDecalsRendered = true;
-				//_gFrontWaveBitmap = 
-				
+				/*
 				var _gSmokeSprite:Sprite = new Sprite();
 				_gSmokeSprite.graphics.beginFill(0x000000, 0.5);
 				_gSmokeSprite.graphics.drawCircle(0, 0, 3);
@@ -163,12 +153,14 @@ package com.ad.games.fc2.view.starling.map.object.shape
 				_gFireSprite.graphics.drawCircle(0, 0, 2);
 				_gFireSprite.graphics.endFill();
 				_gFireBitmap = Rasterizer.toBitmap(_gFireSprite, Rasterizer.HALIGN_CENTER + Rasterizer.VALIGN_MIDDLE);
+				*/
 			}
 		}		
-		
+		/*
 		public override function cache(scale:Number=1):void
 		{
 			BaseView.cache(this, scale);
 		}
+		*/
 	}
 }
