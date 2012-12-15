@@ -1,21 +1,26 @@
-package com.ad.games.fc.view.map
+package com.ad.games.fc2.view.starling.map
 {
-	import com.ad.games.fc.Application;
-	import com.ad.games.fc.view.base.BaseView;
-	import com.ad.games.fc.view.map.object.MapLayerObject;
-	import com.ad.games.fc.view.map.object.ShipMapLayerObject;
+	import com.ad.games.fc2.config.GlobalConfig;
+	import com.ad.games.fc2.view.starling.base.BaseView;
+	import com.ad.games.fc2.view.starling.map.object.MapLayerObject;
+	import com.ad.games.fc2.view.starling.map.object.ShipMapLayerObject;
+	import com.ad.games.fc2.view.utils.DeviceProperties;
+	import com.ad.games.fc2.view.utils.Rasterizer;
 	
 	import flash.display.Sprite;
 	
+	import starling.display.DisplayObject;
+	import starling.display.Quad;
+	
 	public final class MiniMap extends BaseView
 	{
-		private static var _map:Map;
-		private static var _frame:Sprite;
+		private var _map:MapView;
+		private var _frame:DisplayObject;
 		private static const SCALE:Number = 0.05;
-		private static var _objects:Vector.<MapLayerObject>; 
-		private static var _objectShapes:Vector.<Sprite>;
+		private var _objects:Vector.<MapLayerObject>; 
+		private var _objectShapes:Vector.<Sprite>;
 		
-		public function MiniMap(map:Map)
+		public function MiniMap(map:MapView)
 		{
 			super();
 			_map = map;
@@ -26,18 +31,22 @@ package com.ad.games.fc.view.map
 		{
 			super.draw();
 			
-			graphics.lineStyle(0.5, 0x0);
-			graphics.beginFill(0x3399FF);
-			graphics.drawRect(0, 0, _map.width*SCALE, _map.height*SCALE);
-			graphics.endFill();
+			var bg:Sprite = new Sprite();
+			bg.graphics.lineStyle(1, 0x0);
+			bg.graphics.drawRect(0, 0, _map.width*SCALE, _map.height*SCALE);
+			bg.graphics.endFill();
 			
-			_frame = new Sprite();
-			_frame.graphics.lineStyle(0.5, 0xFF0000);			
-			_frame.graphics.drawRect(0, 0, Application.getSreenWidth()*SCALE, Application.getSreenHeight()*SCALE);
+			addChild(Rasterizer.fromSpriteToImage(bg, false, 0x3399FF));
+			
+			var frame:Sprite = new Sprite();
+			frame.graphics.lineStyle(1, 0xFF0000);			
+			frame.graphics.drawRect(0, 0, DeviceProperties.getScreenSize().width*SCALE, DeviceProperties.getScreenSize().height*SCALE);
+			_frame = Rasterizer.fromSpriteToImage(frame, true);
 			addChild(_frame);
 			
 			_objects = MapLayerObject.getMapLayerObjects();
 			
+			/*
 			for (var i:uint=0; i<_objects.length; i++) {
 				_objectShapes[i] = new Sprite();
 				var color:uint = (_objects[i] is ShipMapLayerObject) ? ShipMapLayerObject(_objects[i]).getShip().getNation().getColor() : 0xFFFFFF;
@@ -46,8 +55,9 @@ package com.ad.games.fc.view.map
 				_objectShapes[i].graphics.endFill();
 				addChild(_objectShapes[i]);
 			}
+			*/
 			
-			scaleX = 0.2 * Application.getSreenWidth()/width;
+			scaleX = 0.2 * DeviceProperties.getScreenSize().width/width;
 			scaleY = scaleX;
 		}
 		
@@ -66,10 +76,12 @@ package com.ad.games.fc.view.map
 			_scaleX = SCALE;
 			_scaleY = SCALE;
 			
+			/*
 			for (var i:uint=0; i<_objects.length; i++) {
 				_objectShapes[i].x = _objects[i].x*_scaleX;
 				_objectShapes[i].y = _objects[i].y*_scaleY;
 			}
+			*/
 		}
 	}
 }

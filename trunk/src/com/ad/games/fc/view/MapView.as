@@ -71,7 +71,7 @@ package com.ad.games.fc.view
 			var _this:MapView = this;
 			
 			setTimeout( function():void {
-				_testStartTime = (new Date()).getTime();
+				_testStartTime = (new Date()).time;
 				_frames = 0;
 				_fpsCounter = 0;
 				_this.addEventListener(Event.ENTER_FRAME, _this.count);				
@@ -150,7 +150,7 @@ package com.ad.games.fc.view
 			removeEventListener(Event.ENTER_FRAME, count);
 
 			Console.clear();
-			Console.appendLine("FPS: " + Math.round(_minFps) + " / " + Math.round(Number(_frames)/(((new Date()).getTime() - _testStartTime)/1000)) + " / " + Math.round(_maxFps));
+			Console.appendLine("FPS: " + Math.round(_minFps) + " / " + Math.round(Number(_frames)/(((new Date()).time - _testStartTime)/1000)) + " / " + Math.round(_maxFps));
 			
 			_frames = 0;
 			_testStarted = false;

@@ -3,6 +3,7 @@ package com.ad.games.fc2.view.starling.map
 	import com.ad.games.fc2.config.GlobalConfig;
 	import com.ad.games.fc2.view.starling.base.BaseView;
 	import com.ad.games.fc2.view.utils.Console;
+	import com.ad.games.fc2.view.utils.Rasterizer;
 	
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
@@ -47,12 +48,8 @@ package com.ad.games.fc2.view.starling.map
 			sprite.graphics.clear();
 			sprite.graphics.lineStyle(GlobalConfig.MAP_CURSOR_BORDER, state);
 			sprite.graphics.drawCircle(GlobalConfig.MAP_CELL_SIZE/2-GlobalConfig.MAP_CURSOR_BORDER/2, GlobalConfig.MAP_CELL_SIZE/2-GlobalConfig.MAP_CURSOR_BORDER/2, GlobalConfig.MAP_CELL_SIZE/2-(GlobalConfig.MAP_CURSOR_BORDER));
-			sprite.opaqueBackground = 0x0066FF;
-			var bitmap:BitmapData = new BitmapData(GlobalConfig.MAP_CELL_SIZE-GlobalConfig.MAP_CURSOR_BORDER, GlobalConfig.MAP_CELL_SIZE-GlobalConfig.MAP_CURSOR_BORDER);
-			bitmap.draw(sprite);			
-			var texture:Texture = Texture.fromBitmapData(bitmap);
-			var image:Image = new Image(texture);
-			image.blendMode = BlendMode.NONE;
+
+			var image:Image = Rasterizer.fromSpriteToImage(sprite, true);
 			image.pivotX = -GlobalConfig.MAP_CURSOR_BORDER;
 			image.pivotY = -GlobalConfig.MAP_CURSOR_BORDER;
 			return image;

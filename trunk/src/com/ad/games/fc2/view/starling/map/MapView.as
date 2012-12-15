@@ -3,6 +3,7 @@ package com.ad.games.fc2.view.starling.map
 	import com.ad.games.fc2.config.GlobalConfig;
 	import com.ad.games.fc2.view.starling.base.BaseTouchView;
 	import com.ad.games.fc2.view.starling.map.object.MapLayerObject;
+	import com.ad.games.fc2.view.utils.Rasterizer;
 	
 	import flash.display.BitmapData;
 	import flash.geom.Point;
@@ -63,7 +64,7 @@ package com.ad.games.fc2.view.starling.map
 			var _height:Number = factor*GlobalConfig.MAP_CELL_SIZE;
 			
 			var bgCell:flash.display.Sprite = new flash.display.Sprite();
-			bgCell.opaqueBackground = 0x0066FF;
+			//bgCell.opaqueBackground = 0x0066FF;
 			bgCell.graphics.lineStyle(1, 0x3399FF);
 			
 			for (var i:uint = 0; i<factor; i++) {
@@ -75,10 +76,7 @@ package com.ad.games.fc2.view.starling.map
 				bgCell.graphics.lineTo(j*GlobalConfig.MAP_CELL_SIZE, _height);
 			}
 			
-			var bitmap:BitmapData = new BitmapData(_width, _height);
-			bitmap.draw(bgCell);			
-			var texture:Texture = Texture.fromBitmapData(bitmap);
-			var image:Image = new Image(texture);
+			var image:Image = Rasterizer.fromSpriteToImage(bgCell, false, 0x0066FF);
 			image.blendMode = BlendMode.NONE;
 			
 			var quadBatch:QuadBatch = new QuadBatch();
@@ -237,7 +235,17 @@ package com.ad.games.fc2.view.starling.map
 		}
 		
 		protected override function onSingleTouchEnd(touch:Touch):Boolean {
+			dispatchEvent(new Event(EVENT_MAP_UPDATE));
 			return false;
+		}
+		
+		protected override function onScale(newScale:Number):Boolean {
+			dispatchEvent(new Event(EVENT_MAP_UPDATE));
+			return false;
+		}		
+		
+		protected override function onDoubleTouchEnd(touches:Vector.<Touch>):Boolean {
+			return true;
 		}
 		
 		protected override function onSingleTouchOver(touch:Touch):Boolean {
@@ -245,7 +253,7 @@ package com.ad.games.fc2.view.starling.map
 			return true;
 		}
 		
-		protected override function onSingleTouchMove(touch:Touch):Boolean {			
+		protected override function onSingleTouchMove(touch:Touch):Boolean {
 			return false;
 		}		
 		

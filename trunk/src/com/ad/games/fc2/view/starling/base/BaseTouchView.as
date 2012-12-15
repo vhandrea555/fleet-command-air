@@ -71,6 +71,8 @@ package com.ad.games.fc2.view.starling.base
 			
 			scaleX = _scale;
 			scaleY = _scale;
+			
+			onScale(_scale);
 		}		
 		
 		private function processSingleTouchMove(touch:Touch):void {
@@ -127,9 +129,21 @@ package com.ad.games.fc2.view.starling.base
 			return false;
 		}
 		
+		protected function onDoubleTouchStart(touches:Vector.<Touch>):Boolean {
+			return false;
+		}		
+		
 		protected function onSingleTouchEnd(touch:Touch):Boolean {
 			return false;
 		}
+		
+		protected function onScale(newScale:Number):Boolean {			
+			return false;
+		}		
+		
+		protected function onDoubleTouchEnd(touches:Vector.<Touch>):Boolean {
+			return false;
+		}		
 		
 		protected function onSingleTouchOver(touch:Touch):Boolean {
 			return false;
@@ -160,12 +174,16 @@ package com.ad.games.fc2.view.starling.base
 			
 			if (touches.length == 1) {
 				onSingleTouchStart(touches[0]);
+			} else if (touches.length == 2) {
+				onDoubleTouchStart(touches);
 			}
 			
 			touches = event.getTouches(this, TouchPhase.ENDED);
 			
 			if (touches.length == 1) {
 				onSingleTouchEnd(touches[0]);
+			}else if (touches.length == 2) {
+				onDoubleTouchEnd(touches);
 			}
 			
 			touches = event.getTouches(this, TouchPhase.HOVER);
