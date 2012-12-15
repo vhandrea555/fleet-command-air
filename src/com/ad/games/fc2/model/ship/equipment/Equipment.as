@@ -74,17 +74,5 @@ package com.ad.games.fc2.model.ship.equipment
 		{
 			return _name;
 		}
-		
-		public static function initiate():void
-		{
-			var _e:Equipment;
-			_e = new Hull(null, null);
-			_e = new Structure(null, null);
-			_e = new Barbette(null, null);
-			_e = new Turret(null, null);
-			_e = new Tube(null, null);
-			_e = new Gun(null, null);
-			_e = new BridgeStructure(null, null);
-		}
 	}
 }

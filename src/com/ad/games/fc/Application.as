@@ -26,8 +26,8 @@ package com.ad.games.fc
 		private static var _mapView:MapView;
 		private static var _controlsView:ControlsView;
 		
-		public static const UPDATE_TIMEOUT_NORMAL:uint = 40;
-		public static const UPDATE_TIMEOUT_LOW:uint = 40;
+		public static const UPDATE_TIMEOUT_NORMAL:uint = 20;
+		public static const UPDATE_TIMEOUT_LOW:uint = 20;
 		public static const QUALITY_NORMAL:String = StageQuality.HIGH;
 		
 		private static var _instance:Application;

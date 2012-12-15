@@ -37,6 +37,11 @@ package com.ad.games.fc2
 			return _instance;
 		}
 		
+		public static function getContext():ApplicationContext
+		{
+			return _context;
+		}		
+		
 		private function init(e:Event = null):void
 		{
 			try {
